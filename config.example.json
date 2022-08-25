@@ -1,0 +1,13 @@
+{
+    "shopName": "Bayshore",
+    "shopNickname": "Bayshore",
+    "regionName": "JPN0123",
+    "serverIp": "127.0.0.1",
+    "gameOptions": {
+        "grantFullTuneTicketToNewUsers": 5, 
+        "giftCarsFullyTuned": 0, 
+        "scratchEnabled": 1, 
+        "scratchType": 1, 
+        "giveMeterReward": 0
+    }
+}

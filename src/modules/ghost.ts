@@ -381,7 +381,12 @@ export default class GhostModule extends Module {
                     // Push user's car data without ghost trail
 					if(!(ghost_trails)){ 
 						lists_ghostcar.push(wm.wm.protobuf.GhostCar.create({
-							car: car[randomNumber]
+							car: car[randomNumber],
+							area: body.area,
+							ramp: rampVal,
+							path: pathVal,
+							nonhuman: true,
+							type: wm.wm.protobuf.GhostType.GHOST_DEFAULT,					
 						}));
 					}
                     // Push user's car data with ghost trail
@@ -396,6 +401,9 @@ export default class GhostModule extends Module {
                         // Push data to Ghost car proto
 						lists_ghostcar.push(wm.wm.protobuf.GhostCar.create({
 							car: car[randomNumber],
+							area: body.area,
+							ramp: rampVal,
+							path: pathVal,
 							nonhuman: false,
 							type: wm.wm.protobuf.GhostType.GHOST_NORMAL,
 							trailId: ghost_trails!.dbId!
@@ -410,7 +418,7 @@ export default class GhostModule extends Module {
 				ramp: rampVal,
 				path: pathVal,
 				ghosts: lists_ghostcar,
-				selectionMethod: Number(body.selectionMethod)
+				selectionMethod: wm.wm.protobuf.PathSelectionMethod.PATH_NORMAL
 			};
 
 			// Encode the response
@@ -426,6 +434,7 @@ export default class GhostModule extends Module {
 
             // Get the request body for the load ghost drive data request
             let body = wm.wm.protobuf.LoadGhostDriveDataRequest.decode(req.body);
+			console.log(body);
 
             // Get the path value from request body
 			let path = body.path;

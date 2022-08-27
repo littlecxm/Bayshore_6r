@@ -5,13 +5,13 @@ Wangan Midnight Maximum Tune 6R server reimplementation written in TypeScript
     <img src="https://repository-images.githubusercontent.com/523956269/9a72b45d-7b27-4237-8aeb-476865a6d6d6" width="640" title="hover text">
 </p>
 
-# What is working
+## What is working
  - Same like 6
  - VSORG [Expedition] (some of them maybe... expedition saving works)
  - Highway [New Mode] (some of them maybe... expedition saving works)
  - Ghost Trophies Saving
  
- # What is not working
+ ## What is not working
  - Maybe game will crash at mileage screen (from my end).. this is not because of bayshore server
 
 ## Credits

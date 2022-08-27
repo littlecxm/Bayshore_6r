@@ -13,6 +13,8 @@ Wangan Midnight Maximum Tune 6R server reimplementation written in TypeScript
  
  ## What is not working
  - Maybe game will crash at mileage screen (from my end).. this is not because of bayshore server (maybe openparrot?)
+ 
+ - Transfer from 6
 
 ## Credits
 This software is part of [Project Asakura](https://github.com/ProjectAsakura).

@@ -209,7 +209,7 @@ export default class GhostModule extends Module {
             let msg = {
                 error: wm.wm.protobuf.ErrorCode.ERR_SUCCESS,
                 areas: areaExpedition,
-                selectionMethod: wm.wm.protobuf.PathSelectionMethod.PATH_CHALLENGER // idk what this is
+                selectionMethod: wm.wm.protobuf.PathSelectionMethod.PATH_NORMAL // idk what this is
             };
 
             // Encode the response

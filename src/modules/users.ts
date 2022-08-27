@@ -334,7 +334,7 @@ export default class UserModule extends Module {
 
 				// TODO: Make saving about this
 				ghostExpeditionLocked: false, 
-				fullTunedCarTicket: false,
+				fullTunedCarTicket: true,
 				ghostVs_2Locked: false,
 				ghostVs_3Locked: false,
 				ghostHighwayLocked: false,

@@ -6,10 +6,11 @@ import wmproto  from "../../wmmt/wm.proto";
 
 // Import Util
 import * as common from "../../util/common";
-import * as ghost_history from "../games/games_util/ghost_history";
+import * as ghost_history from "../ghost/ghost_history";
+import * as ghost_stamp from "../ghost/ghost_stamp";
 
 // Save ghost battle result
-export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequest)
+export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequest, car: any)
 {
     // Declare variable for return
     let ghostModePlay: boolean = false;
@@ -20,30 +21,14 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
     if (!(body.retired || body.timeup)) 
     {
         console.log('Saving Ghost Battle Result');
-
+        
         // Set ghost mode play to true for saving the ghost trail later
         ghostModePlay = true;
 
-        // Get the ghost result for the car
-        let ghostResult = body?.rgResult;
-
         // Declare data
-        let dataGhost : any;
         let dataCar : any;
-
-        // ghostResult is set
-        if (ghostResult)
-        {
-            // Ghost update data
-            dataGhost = {
-                rgRegionMapScore: common.sanitizeInput(ghostResult.rgRegionMapScore), 
-                rgPlayCount: common.sanitizeInput(ghostResult.rgPlayCount), 
-                dressupLevel: common.sanitizeInput(ghostResult.dressupLevel), 
-                dressupPoint: common.sanitizeInput(ghostResult.dressupPoint),
-                rgScore: common.sanitizeInput(ghostResult.rgTrophy),
-                rgTrophy: common.sanitizeInput(ghostResult.rgTrophy),
-            }
-        }
+        let dataGhost : any;
+        let dataHighway : any;
 
         // Get the ghost result for the car
         let cars = body?.car;
@@ -80,6 +65,55 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
                 ghostLevel: common.sanitizeInput(cars.ghostLevel),
             }
         }
+
+        // Get the ghost result for the car
+        let ghostResult = body?.rgResult;
+
+        // ghostResult is set
+        if (ghostResult)
+        {
+            // Ghost update data
+            dataGhost = {
+                rgRegionMapScore: common.sanitizeInput(ghostResult.rgRegionMapScore), 
+                rgPlayCount: common.sanitizeInput(ghostResult.rgPlayCount), 
+                dressupLevel: common.sanitizeInput(ghostResult.dressupLevel), 
+                dressupPoint: common.sanitizeInput(ghostResult.dressupPoint),
+                stampSheet: common.sanitizeInput(ghostResult.stampSheet),
+                stampSheetCount: common.sanitizeInputNotZero(ghostResult.stampSheetCount),
+            }
+
+            // Count total win based on region map score
+            if(ghostResult.rgRegionMapScore && ghostResult.rgRegionMapScore.length !== 0)
+            {
+                let winCounter = 0;
+
+                // Count the total win
+                for(let i=0; i<ghostResult.rgRegionMapScore.length; i++)
+                {
+                    winCounter += ghostResult.rgRegionMapScore[i];
+                }
+                
+                // Set the data 
+                dataGhost.rgWinCount = winCounter;
+                dataGhost.rgScore = winCounter;
+                dataGhost.rgTrophy = winCounter;
+            }
+        }
+
+        // Get the ghost result for the car
+        let highwayResult = body.rgResult?.highwayResult;
+
+        // ghostResult is set
+        if (highwayResult)
+        {
+            // Highway Ghost update data
+            dataHighway = {
+                rgHighwayClearCount: common.sanitizeInput(highwayResult.rgHighwayClearCount), 
+                rgHighwayPoint: common.sanitizeInput(highwayResult.rgHighwayPoint), 
+                rgHighwayStationClearBits: common.sanitizeInput(highwayResult.rgHighwayStationClearBits), 
+                rgHighwayPreviousDice: common.sanitizeInput(highwayResult.rgHighwayPreviousDice),
+            }
+        }
         
         // Update the car properties
         await prisma.car.update({
@@ -87,8 +121,9 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
                 carId: body.carId
             },
             data: {
+                ...dataCar,
                 ...dataGhost,
-                ...dataCar
+                ...dataHighway
             }
         }); 
 
@@ -99,64 +134,31 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
 
         switch (body.rgResult!.selectionMethod) 
         {
-            // Ghost Battle by Level
-            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_LEVEL:
-            {
-                console.log('Normal Ghost Mode Found - Select by Level');
-
-                ghost_historys = await ghost_history.saveGhostHistory(body);
-
-                // Update the updateNewTrail value
-                updateNewTrail = false;
-
-                break;
-            }
-
-            // Ghost Battle by Name
-            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SEARCH_BY_NAME:
-            {
-                console.log('Normal Ghost Mode Found - Search by Name');
-
-                ghost_historys = await ghost_history.saveGhostHistory(body);
-
-                // Update the updateNewTrail value
-                updateNewTrail = ghost_historys.updateNewTrail;
-
-                break;
-            }
-
-            // Ghost Battle by Region
+            // Ghost Battle Search by Region (1)
             case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SEARCH_BY_REGION:
             {
                 console.log('Normal Ghost Mode Found - Search by Region');
 
                 ghost_historys = await ghost_history.saveGhostHistory(body);
 
+                // Return Stamp (Shuttle Match)
+                await ghost_stamp.shuttleReturnStamp(body);
+
                 // Update the updateNewTrail value
                 updateNewTrail = ghost_historys.updateNewTrail;
 
                 break;
             }
 
-            // Ghost Battle from History
-            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_FROM_HISTORY:
+            // Ghost Battle Select by Level (2)
+            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_LEVEL:
             {
-                console.log('Normal Ghost Mode Found - Select from History');
+                console.log('Normal Ghost Mode Found - Select by Level');
 
                 ghost_historys = await ghost_history.saveGhostHistory(body);
 
-                // Update the updateNewTrail value
-                updateNewTrail = ghost_historys.updateNewTrail;
-
-                break;
-            }
-
-            // Ghost Battle by Shop
-            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SEARCH_BY_SHOP:
-            {
-                console.log('Normal Ghost Mode Found - Search by Shop');
-
-                ghost_historys = await ghost_history.saveGhostHistory(body);
+                // Return Stamp (Shuttle Match)
+                await ghost_stamp.shuttleReturnStamp(body);
 
                 // Update the updateNewTrail value
                 updateNewTrail = ghost_historys.updateNewTrail;
@@ -164,7 +166,7 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
                 break;
             }
 
-            // Crown Ghost Battle Mode
+            // Crown Ghost Battle Mode (3)
             case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_CROWN_MATCH:
             {
                 console.log('Crown Ghost Mode Found');
@@ -320,51 +322,413 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
                 break;
             }
 
-            // OCM Ghost Battle Mode
+            // Ghost Battle Select Stamp Match (4)
+            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_STAMP_MATCH:
+            {
+                console.log('Normal Ghost Mode Found - Select Stamp Match');
+
+                ghost_historys = await ghost_history.saveGhostHistory(body);
+
+                // Return Stamp (Shuttle Match)
+                await ghost_stamp.shuttleReturnStamp(body);
+
+                // Update the updateNewTrail value
+                updateNewTrail = ghost_historys.updateNewTrail;
+
+                break;
+            }
+
+            // Ghost Battle Select from History (5)
+            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_FROM_HISTORY:
+            {
+                console.log('Normal Ghost Mode Found - Select from History');
+
+                ghost_historys = await ghost_history.saveGhostHistory(body);
+
+                // Return Stamp (Shuttle Match)
+                await ghost_stamp.shuttleReturnStamp(body);
+
+                // Update the updateNewTrail value
+                updateNewTrail = ghost_historys.updateNewTrail;
+
+                break;
+            }
+
+            // Ghost Battle Search by Shop (6)
+            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SEARCH_BY_SHOP:
+            {
+                console.log('Normal Ghost Mode Found - Search by Shop');
+
+                ghost_historys = await ghost_history.saveGhostHistory(body);
+
+                // Return Stamp (Shuttle Match)
+                await ghost_stamp.shuttleReturnStamp(body);
+
+                // Update the updateNewTrail value
+                updateNewTrail = ghost_historys.updateNewTrail;
+
+                break;
+            }
+
+            // Ghost Battle Search by Name (7)
+            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SEARCH_BY_NAME:
+            {
+                console.log('Normal Ghost Mode Found - Search by Name');
+
+                ghost_historys = await ghost_history.saveGhostHistory(body);
+
+                // Return Stamp (Shuttle Match)
+                await ghost_stamp.shuttleReturnStamp(body);
+
+                // Update the updateNewTrail value
+                updateNewTrail = ghost_historys.updateNewTrail;
+
+                break;
+            }
+
+            // Ghost Battle Challenger (8)
+            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_ACCEPT_CHALLENGER:
+            {
+                console.log('Normal Ghost Mode Found - Challenger');
+
+                ghost_historys = await ghost_history.saveGhostHistory(body);
+
+                // Return Stamp (Shuttle Match)
+                await ghost_stamp.shuttleReturnStamp(body);
+
+                // Update the updateNewTrail value
+                updateNewTrail = ghost_historys.updateNewTrail;
+
+                break;
+            }
+
+            // OCM Ghost Battle Mode (11)
             case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_COMPETITION:
             {
                 console.log('OCM Ghost Mode Found');
                 
                 OCMModePlay = true;
-                let saveExOCM: any = {};
-                saveExOCM.carId = body.carId;
 
-                if(body.rgResult?.competitionId)
-                {
-                    saveExOCM.competitionId = body.rgResult?.competitionId!;
-                }
+                // Get the rg result for the car
+                let rgResult = body?.rgResult;
 
-                if(body.rgResult?.periodId)
+                // rgResult is set
+                if (rgResult)
                 {
-                    saveExOCM.periodId = body.rgResult?.periodId!;
-                }
-                else
-                {
-                    saveExOCM.periodId = 0;
-                }
+                    let data : any = {
+                        carId: body.carId,
+                        competitionId: common.sanitizeInput(rgResult.competitionId),
+                        periodId: common.sanitizeInput(rgResult.periodId) || 0,
+                        brakingPoint: common.sanitizeInput(rgResult.brakingPoint) || 0,
+                        playedAt: common.sanitizeInput(body.playedAt),
+                    }
 
-                if(body.rgResult?.brakingPoint)
-                {
-                    saveExOCM.brakingPoint = body.rgResult?.brakingPoint!;
-                }
-                else
-                {
-                    saveExOCM.brakingPoint = 0;
-                }
+                    // Get the user's available OCM Battle data
+                    let countOCM = await prisma.oCMPlayRecord.count({ 
+                        where: {
+                            competitionId: data.competitionId,
+                            carId: body.carId
+                        }
+                    });
 
-                if(body?.playedAt)
-                {
-                    saveExOCM.playedAt = body?.playedAt!;
+                    // User's OCM Battle data available
+                    if(countOCM !== 0)
+                    {
+                        console.log('OCM Play Record found');
+                        console.log('Updaing OCM Play Record entry');
+
+                        await prisma.oCMPlayRecord.updateMany({
+                            where:{
+                                carId: data.carId,
+                                competitionId: data.competitionId,
+                            },
+                            data: data
+                        });
+                    }
+                    // First time User playing OCM Battle
+                    else
+                    { 
+                        console.log('OCM Play Record not found');
+                        console.log('Creating new OCM Play Record entry');
+
+                        await prisma.oCMPlayRecord.create({
+                            data: data
+                        });
+                    }
+
+                    ghost_historys = await ghost_history.saveOCMGhostHistory(body);
+
+                    // Update the updateNewTrail value
+                    updateNewTrail = ghost_historys.updateNewTrail;
+                }
+                
+                break;
+            }
+
+            // Ghost Battle Select from Bookmars (12)
+            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_FROM_BOOKMARKS:
+            {
+                console.log('Normal Ghost Mode Found - Select from Bookmars');
+
+                ghost_historys = await ghost_history.saveGhostHistory(body);
+
+                // Return Stamp (Shuttle Match)
+                await ghost_stamp.shuttleReturnStamp(body);
+
+                // Update the updateNewTrail value
+                updateNewTrail = ghost_historys.updateNewTrail;
+
+                break;
+            }
+
+            // Ghost Battle Expedition (13)
+            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_EXPEDITION:
+            {
+                console.log('Normal Ghost Mode Found - VS Other Region (Expedition)');
+
+                ghost_historys = await ghost_history.saveVSORGGhostHistory(body);
+
+                // Return Stamp (Shuttle Match)
+                await ghost_stamp.shuttleReturnStamp(body);
+
+                // Update the updateNewTrail value
+                updateNewTrail = ghost_historys.updateNewTrail;
+
+                break;
+            }
+
+            // Ghost Battle Select by Place (14)
+            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_PLACE:
+            {
+                console.log('Normal Ghost Mode Found - Select by Place');
+
+                // TODO: Make saving
+                ghost_historys = await ghost_history.saveGhostHistory(body);
+
+                // Return Stamp (Shuttle Match)
+                await ghost_stamp.shuttleReturnStamp(body);
+
+                // Update the updateNewTrail value
+                updateNewTrail = ghost_historys.updateNewTrail;
+            }
+
+            // Ghost Battle Select by Other Place (15)
+            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_OTHER_PLACE:
+            {
+                console.log('Normal Ghost Mode Found - Select by Other Place');
+
+                // TODO: Make saving
+                ghost_historys = await ghost_history.saveGhostHistory(body);
+
+                // Return Stamp (Shuttle Match)
+                await ghost_stamp.shuttleReturnStamp(body);
+
+                // Update the updateNewTrail value
+                updateNewTrail = ghost_historys.updateNewTrail;
+            }
+
+            // Ghost Battle Select by Manufacturer (16)
+            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_MANUFACTURER:
+            {
+                console.log('Normal Ghost Mode Found - Select by Manufacturer');
+
+                // TODO: Make saving
+                ghost_historys = await ghost_history.saveGhostHistory(body);
+
+                // Return Stamp (Shuttle Match)
+                await ghost_stamp.shuttleReturnStamp(body);
+
+                // Update the updateNewTrail value
+                updateNewTrail = ghost_historys.updateNewTrail;
+            }
+
+            // Ghost Battle Select by Other Manufacturer (17)
+            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_OTHER_MANUFACTURER:
+            {
+                console.log('Normal Ghost Mode Found - Select by Other Manufacturer');
+
+                // TODO: Make saving
+                ghost_historys = await ghost_history.saveGhostHistory(body);
+
+                // Return Stamp (Shuttle Match)
+                await ghost_stamp.shuttleReturnStamp(body);
+
+                // Update the updateNewTrail value
+                updateNewTrail = ghost_historys.updateNewTrail;
+            }
+
+            // Ghost Battle Select by Played (18)
+            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_PLAYED:
+            {
+                console.log('Normal Ghost Mode Found - Select by Played');
+
+                // TODO: Make saving
+                ghost_historys = await ghost_history.saveGhostHistory(body);
+
+                // Return Stamp (Shuttle Match)
+                await ghost_stamp.shuttleReturnStamp(body);
+
+                // Update the updateNewTrail value
+                updateNewTrail = ghost_historys.updateNewTrail;
+            }
+
+            // Ghost Battle Select by Region Manufacturer (20)
+            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_REGION_MANUFACTURER:
+            {
+                console.log('Normal Ghost Mode Found - Select by Region Manufacturer');
+
+                // TODO: Make saving
+                ghost_historys = await ghost_history.saveGhostHistory(body);
+
+                // Return Stamp (Shuttle Match)
+                await ghost_stamp.shuttleReturnStamp(body);
+
+                // Update the updateNewTrail value
+                updateNewTrail = ghost_historys.updateNewTrail;
+            }
+
+            // Ghost Battle Select by Region Played (22)
+            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_REGION_PLAYED:
+            {
+                console.log('Normal Ghost Mode Found - Select by Region Played');
+
+                // TODO: Make saving
+                ghost_historys = await ghost_history.saveGhostHistory(body);
+
+                // Return Stamp (Shuttle Match)
+                await ghost_stamp.shuttleReturnStamp(body);
+
+                // Update the updateNewTrail value
+                updateNewTrail = ghost_historys.updateNewTrail;
+            }
+
+            // Ghost Battle Select by Region Station (23)
+            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_REGION_STATION:
+            {
+                console.log('Normal Ghost Mode Found - Select by Region Station');
+
+                // TODO: Make saving
+                ghost_historys = await ghost_history.saveGhostHistory(body);
+
+                // Return Stamp (Shuttle Match)
+                await ghost_stamp.shuttleReturnStamp(body);
+
+                // Update the updateNewTrail value
+                updateNewTrail = ghost_historys.updateNewTrail;
+            }
+
+            // Ghost Battle Select by Region Boss (24)
+            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_REGION_BOSS:
+            {
+                console.log('Normal Ghost Mode Found - Select by Region Boss');
+
+                // TODO: Make saving
+                ghost_historys = await ghost_history.saveGhostHistory(body);
+
+                // Return Stamp (Shuttle Match)
+                await ghost_stamp.shuttleReturnStamp(body);
+
+                // Update the updateNewTrail value
+                updateNewTrail = ghost_historys.updateNewTrail;
+            }
+
+            // Ghost Battle Select by Region Place (25)
+            case wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_REGION_PLACE:
+            {
+                console.log('Normal Ghost Mode Found - Select by Region Place');
+
+                // TODO: Make saving
+                ghost_historys = await ghost_history.saveGhostHistory(body);
+
+                // Return Stamp (Shuttle Match)
+                await ghost_stamp.shuttleReturnStamp(body);
+
+                // Update the updateNewTrail value
+                updateNewTrail = ghost_historys.updateNewTrail;
+            }
+        }
+    }
+    // Retiring Ghost Battle
+    else if(body.rgResult!.selectionMethod === wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SEARCH_BY_REGION ||
+        body.rgResult!.selectionMethod === wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_LEVEL ||
+        body.rgResult!.selectionMethod === wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_CROWN_MATCH ||
+        body.rgResult!.selectionMethod === wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_STAMP_MATCH || 
+        body.rgResult!.selectionMethod === wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_FROM_HISTORY ||
+        body.rgResult!.selectionMethod === wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SEARCH_BY_SHOP || 
+        body.rgResult!.selectionMethod === wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SEARCH_BY_NAME ||
+        body.rgResult!.selectionMethod === wmproto.wm.protobuf.GhostSelectionMethod.GHOST_ACCEPT_CHALLENGER ||
+        body.rgResult!.selectionMethod === wmproto.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_FROM_BOOKMARKS)
+    {
+        console.log('Normal Ghost Mode Found but Retiring');
+
+        // Get the ghost result for the car
+        let ghostResult = body?.rgResult;
+
+        // ghostResult is set
+        if (ghostResult)
+        {
+            // Ghost update data
+            let dataGhost = {
+                rgPlayCount: common.sanitizeInput(ghostResult.rgPlayCount), 
+            }
+
+            // Update the car properties
+            await prisma.car.update({
+                where: {
+                    carId: body.carId
+                },
+                data: {
+                    ...dataGhost
+                }
+            }); 
+        }
+    }
+    // Retiring OCM for mini games
+    else if(body.rgResult!.selectionMethod === wmproto.wm.protobuf.GhostSelectionMethod.GHOST_COMPETITION)
+    {
+        // Get current date
+        let date = Math.floor(new Date().getTime() / 1000);
+
+        // Get currently active OCM event
+        let ocmEventDate = await prisma.oCMEvent.findFirst({ 
+            where: {
+                // qualifyingPeriodStartAt is less than current date
+                qualifyingPeriodStartAt: { lte: date },
+    
+                // competitionEndAt is greater than current date
+                competitionEndAt: { gte: date },
+            },
+            orderBy:{
+                dbId: 'desc'
+            }
+        });
+
+        if(ocmEventDate!.qualifyingPeriodStartAt < date && ocmEventDate!.qualifyingPeriodCloseAt > date)
+        { 
+            console.log('OCM Ghost Mode Found but Retiring');
+
+            // Get the rg result for the car
+            let rgResult = body?.rgResult;
+
+            // rgResult is set
+            if (rgResult)
+            {
+                let data : any = {
+                    carId: body.carId,
+                    competitionId: common.sanitizeInput(rgResult.competitionId),
+                    periodId: common.sanitizeInput(rgResult.periodId) || 0,
+                    brakingPoint: common.sanitizeInput(rgResult.brakingPoint) || 0,
+                    playedAt: common.sanitizeInput(body.playedAt),
                 }
 
                 // Get the user's available OCM Battle data
                 let countOCM = await prisma.oCMPlayRecord.count({ 
                     where: {
-                        competitionId: saveExOCM.competitionId,
+                        competitionId: data.competitionId,
                         carId: body.carId
                     }
                 });
-                
+
                 // User's OCM Battle data available
                 if(countOCM !== 0)
                 {
@@ -373,10 +737,10 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
 
                     await prisma.oCMPlayRecord.updateMany({
                         where:{
-                            carId: saveExOCM.carId,
-                            competitionId: saveExOCM.competitionId,
+                            carId: data.carId,
+                            competitionId: data.competitionId,
                         },
-                        data: saveExOCM
+                        data: data
                     });
                 }
                 // First time User playing OCM Battle
@@ -386,19 +750,148 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
                     console.log('Creating new OCM Play Record entry');
 
                     await prisma.oCMPlayRecord.create({
-                        data: saveExOCM
+                        data: data
                     });
                 }
-
-                ghost_historys = await ghost_history.saveOCMGhostHistory(body);
-
-                // Update the updateNewTrail value
-                updateNewTrail = ghost_historys.updateNewTrail;
-
-                break;
             }
         }
     }
+    // Retiring VS ORG
+    else if(body.rgResult!.selectionMethod === wmproto.wm.protobuf.GhostSelectionMethod.GHOST_EXPEDITION)
+    {
+        console.log('VSORG (Expedition) Ghost Mode Found but Retiring');
+
+        // Get the ghost result for the car
+        let ghostResult = body?.rgResult;
+
+        // ghostResult is set
+        let dataGhost: any;
+        if (ghostResult)
+        {
+            dataGhost = {
+                rgRegionMapScore: common.sanitizeInput(ghostResult.rgRegionMapScore), 
+                rgPlayCount: common.sanitizeInput(ghostResult.rgPlayCount), 
+                dressupLevel: common.sanitizeInput(ghostResult.dressupLevel), 
+                dressupPoint: common.sanitizeInput(ghostResult.dressupPoint),
+                stampSheet: common.sanitizeInput(ghostResult.stampSheet),
+                stampSheetCount: common.sanitizeInputNotZero(ghostResult.stampSheetCount),
+                rgTrophy: common.sanitizeInput(ghostResult.rgTrophy)
+            }
+
+            // Count total win based on region map score
+            if(ghostResult.rgRegionMapScore && ghostResult.rgRegionMapScore.length !== 0)
+            {
+                let winCounter = 0;
+
+                // Count the total win
+                for(let i=0; i<ghostResult.rgRegionMapScore.length; i++)
+                {
+                    winCounter += ghostResult.rgRegionMapScore[i];
+                }
+                
+                // Set the data 
+                dataGhost.rgWinCount = winCounter;
+                dataGhost.rgScore = winCounter;
+            }
+
+            // Update the car properties
+            await prisma.car.update({
+                where: {
+                    carId: body.carId
+                },
+                data: {
+                    ...dataGhost
+                }
+            }); 
+        }
+
+        // Get the ghost expedition result for the car
+        let expeditionResult = body.rgResult?.expeditionResult;
+
+        // expeditionResult is set
+        if (expeditionResult)
+        {
+            // Expedition update data
+            let dataExpedition = {
+                ghostExpeditionId: common.sanitizeInput(expeditionResult.ghostExpeditionId),
+                sugorokuPoint: common.sanitizeInput(expeditionResult.sugorokuPoint),
+                earnedScore: common.sanitizeInput(expeditionResult.earnedScore),
+                score: common.sanitizeInput(expeditionResult.score),
+            }
+            
+            let checkExpeditionData = await prisma.ghostExpedition.findFirst({
+                where:{
+                    carId: body.carId
+                }
+            }); 
+
+            // Update the expedition data
+            if(checkExpeditionData)
+            {
+                await prisma.ghostExpedition.update({
+                    where:{
+                        dbId: checkExpeditionData.dbId
+                    },
+                    data: {
+                        ...dataExpedition
+                    }
+                }); 
+            }
+            // Create the expedition data
+            else
+            {
+                await prisma.ghostExpedition.create({
+                    data: {
+                        carId: body.carId,
+                        ...dataExpedition
+                    }
+                }); 
+            }
+            
+            if(expeditionResult.earnedItems!.length !== 0)
+            {
+                console.log('User Item reward from VSORG available, continuing ...');
+
+                // Get current date
+                let date = Math.floor(new Date().getTime() / 1000);
+
+				for(let i=0; i<body.earnedUserItems.length; i++)
+                {
+					await prisma.userItem.create({
+						data: {
+							category: body.earnedUserItems[i].category,
+							itemId: body.earnedUserItems[i].itemId,
+							userId: body.car!.userId!,
+							earnedAt: date,
+							type: 0
+						}
+					});
+				}
+            }
+
+            if(expeditionResult.aftereventBonus!.length !== 0)
+            {
+                console.log('User Item after event reward from VSORG available, continuing ...');
+
+                // Get current date
+                let date = Math.floor(new Date().getTime() / 1000);
+
+				for(let i=0; i<body.earnedUserItems.length; i++)
+                {
+					await prisma.userItem.create({
+						data: {
+							category: body.earnedUserItems[i].category,
+							itemId: body.earnedUserItems[i].itemId,
+							userId: body.car!.userId!,
+							earnedAt: date,
+							type: 0
+						}
+					});
+				}
+            }
+        }
+    }
+    // TODO: Highway Ghost Mode Retiring Saving
 
     // Return the value to 'BASE_PATH/src/modules/game.ts'
     return { ghostModePlay, updateNewTrail, OCMModePlay }

@@ -60,8 +60,6 @@ model Car {
     carId               Int     @id @default(autoincrement())
     name                String
     manufacturer        Int
-    regionId            Int     @default(0)
-    country             String  @default("JPN")
     model               Int
     visualModel         Int
     customColor         Int     @default(0)
@@ -88,8 +86,8 @@ model Car {
     rivalMarker         Int     @default(0)
     lastPlayedAt        Int     @default(0)
     aura                Int     @default(0)
-    auraMotif           Int     @default(0)
-    ghostLevel          Int     @default(1)
+    regionId            Int     @default(0)
+    country             String  @default("JPN")
 
     // This is more data about the car
     tuningPoints           Int         @default(0)
@@ -98,15 +96,22 @@ model Car {
     earnedCustomColor      Boolean     @default(false)
     carSettingsDbId        Int         @unique
     settings               CarSettings @relation(fields: [carSettingsDbId], references: [dbId])
+
+    // VS
+    auraMotif              Int         @default(0)
     vsPlayCount            Int         @default(0)
     vsBurstCount           Int         @default(0)
     vsStarCount            Int         @default(0)
+    vsStarCountMax         Int         @default(0)
     vsCoolOrWild           Int         @default(0)
     vsSmoothOrRough        Int         @default(0)
     vsTripleStarMedals     Int         @default(0)
     vsDoubleStarMedals     Int         @default(0)
     vsSingleStarMedals     Int         @default(0)
     vsPlainMedals          Int         @default(0)
+
+    // Ghost
+    ghostLevel             Int         @default(1)
     rgPlayCount            Int         @default(0)
     rgWinCount             Int         @default(0)
     rgTrophy               Int         @default(0)
@@ -114,8 +119,14 @@ model Car {
     rgStamp                Int         @default(0)
     rgAcquireAllCrowns     Boolean     @default(false)
     rgRegionMapScore       Int[]
+    stampSheetCount        Int         @default(0)
+    stampSheet             Int[]
+
+    // Dress Up
     dressupLevel           Int         @default(0)
     dressupPoint           Int         @default(0)
+
+    // Story
     stPlayCount            Int         @default(0)
     stClearBits            Int         @default(0)
     stClearDivCount        Int         @default(0)
@@ -125,31 +136,36 @@ model Car {
     stConsecutiveWinsMax   Int         @default(0)
     stCompleted100Episodes Boolean     @default(false)
 
-    //NEW 6R
+    // Highway Ghost
     rgScoreVs_2                 Int         @default(0)
     rgHighwayClearCount         Int         @default(0)
     rgHighwayPoint              Int         @default(0)
     rgHighwayStationClearBits   Int         @default(0)
     rgHighwayPreviousDice       Int         @default(0)
 
-    items                  CarItem[]
-    carGTWingDbId          Int                @unique
-    gtWing                 CarGTWing          @relation(fields: [carGTWingDbId], references: [dbId])
-    carStateDbId           Int                @unique
-    state                  CarState           @relation(fields: [carStateDbId], references: [dbId])
-    TimeAttackRecord       TimeAttackRecord[]
+    // Last Played
+    lastPlayedPlaceId           Int?           
+    lastPlayedPlace             PlaceList?    @relation(fields: [lastPlayedPlaceId], references: [id])
 
-    CarCrown               CarCrown[]
-    GhostTrail             GhostTrail[]
-    GhostBattleRecord      GhostBattleRecord[]
-    CarPathandTuning       CarPathandTuning[]
-
+    items                       CarItem[]
+    carGTWingDbId               Int                @unique
+    gtWing                      CarGTWing          @relation(fields: [carGTWingDbId], references: [dbId])
+    carStateDbId                Int                @unique
+    state                       CarState           @relation(fields: [carStateDbId], references: [dbId])
+    TimeAttackRecord            TimeAttackRecord[]
+    CarCrown                    CarCrown[]
+    GhostTrail                  GhostTrail[]
+    GhostBattleRecord           GhostBattleRecord[]
+    CarPathandTuning            CarPathandTuning[]
     OCMGhostBattleRecord        OCMGhostBattleRecord[]
     OCMTally                    OCMTally[]
     OCMTop1Ghost                OCMTop1Ghost[]
     OCMGhostTrail               OCMGhostTrail[]
     OCMPlayRecord               OCMPlayRecord[]
     GhostRegisteredFromTerminal GhostRegisteredFromTerminal[]
+    CarStampTarget              CarStampTarget[]
+    CarChallenger               CarChallenger[]
+    GhostExpedition             GhostExpedition[]
 }
 
 model CarGTWing {
@@ -401,4 +417,46 @@ model GhostRegisteredFromTerminal {
     carId             Int
     competitionId     Int?
     opponentCarId     Int
+}
+
+model CarChallenger {
+    id              Int  @id @default(autoincrement())
+    challengerCar   Car  @relation(fields: [challengerCarId], references: [carId])
+
+    carId           Int
+    challengerCarId Int
+    stamp           Int
+    result          Int
+    area            Int
+    lastPlayedAt    Int        @default(0)
+}
+
+model CarStampTarget {
+    id               Int     @id @default(autoincrement())
+    stampTargetCar   Car     @relation(fields: [stampTargetCarId], references: [carId])
+    carId            Int 
+    stampTargetCarId Int
+    returnCount      Int
+    locked           Boolean
+    recommended      Boolean
+}
+
+model PlaceList {
+    id               Int     @id @default(autoincrement())
+    car              Car[]
+
+    placeId          String
+    regionId         Int
+    shopName         String
+    country          String
+}
+
+model GhostExpedition {
+    dbId                Int     @id @default(autoincrement())
+    car                 Car     @relation(fields: [carId], references: [carId])
+    carId               Int     
+    ghostExpeditionId   Int
+    sugorokuPoint       Int     @default(0)
+    earnedScore         Int     @default(0)
+    score               Int     @default(0) 
 }

@@ -7,7 +7,6 @@ import * as wm from "../wmmt/wm.proto";
 
 // Import Util
 import * as common from "../util/common";
-import bodyParser from "body-parser";
 
 
 export default class GhostModule extends Module {
@@ -16,12 +15,33 @@ export default class GhostModule extends Module {
         app.post('/method/load_ghost_expedition_info', async (req, res) => {
 
             // Get the request body for the load stamp target request
-            //let body = wm.wm.protobuf.LoadGhostExpeditionInfoRequest.decode(req.body);
+            let body = wm.wm.protobuf.LoadGhostExpeditionInfoRequest.decode(req.body);
+
+            let userScores = await prisma.ghostExpedition.findFirst({
+                where:{
+                    carId: body.carId,
+                    ghostExpeditionId: 1
+                }
+            })
+
+            let localScores = await prisma.ghostExpedition.findMany({
+                where:{
+                    ghostExpeditionId: 1
+                }
+            })
+
+            let sum = 0;
+            for(let i=0; i<localScores.length; i++)
+            {
+                sum += localScores[i].score;
+            }
 
             // Response data
             let msg = {
                 error: wm.wm.protobuf.ErrorCode.ERR_SUCCESS,
-                localScore: 100,
+                sugorokuPoint: userScores?.sugorokuPoint || 0,
+                score: userScores?.score || 0,
+                localScore: sum,
             };
 
             // Encode the response
@@ -38,17 +58,39 @@ export default class GhostModule extends Module {
             let car = await prisma.car.findMany({
                 orderBy:{
                     carId: 'asc'
+                },
+                include:{
+                    gtWing: true,
+                    lastPlayedPlace: true
                 }
             });
+
+            let localScores = await prisma.ghostExpedition.findMany({
+                where:{
+                    ghostExpeditionId: 1
+                }
+            })
+
+            let sum = 0;
+            for(let i=0; i<localScores.length; i++)
+            {
+                sum += localScores[i].score;
+            }
 
             let todaysMvps;
             if(car)
             {    
                 for(let i=0; i<car.length; i++)
                 {
+                    let rankingScore = await prisma.ghostExpedition.findMany({
+                        orderBy:{
+                            score: 'desc'
+                        }
+                    }) 
+
                     ghostExpeditionRankings.push(wm.wm.protobuf.GhostExpeditionRankingEntry.create({
                         rank: i+1,
-                        score: 100-i,
+                        score: rankingScore[i].score,
                         car: car[i]!
                     }));
 
@@ -56,7 +98,7 @@ export default class GhostModule extends Module {
                     {
                         todaysMvps = wm.wm.protobuf.GhostExpeditionRankingEntry.create({
                             rank: i+1,
-                            score: 100-i,
+                            score: rankingScore[i].score,
                             car: car[i]!
                         });
                     }
@@ -67,7 +109,7 @@ export default class GhostModule extends Module {
             // Response data
             let msg = {
                 error: wm.wm.protobuf.ErrorCode.ERR_SUCCESS,
-                localScore: 100,
+                localScore: sum,
                 todaysMvp: todaysMvps || null,
                 localRanking: ghostExpeditionRankings || null
             };
@@ -184,7 +226,24 @@ export default class GhostModule extends Module {
 
             let lists_candidates: wm.wm.protobuf.GhostCar[] = [];
 
-            let car = await prisma.car.findMany({});
+            let car = await prisma.car.findMany({
+                include:{
+                    gtWing: true,
+                    lastPlayedPlace: true
+                }
+            });
+
+            let localScores = await prisma.ghostExpedition.findMany({
+                where:{
+                    ghostExpeditionId: 1
+                }
+            })
+
+            let sum = 0;
+            for(let i=0; i<localScores.length; i++)
+            {
+                sum += localScores[i].score;
+            }
 
             if(car)
             {
@@ -278,7 +337,7 @@ export default class GhostModule extends Module {
             let msg = {
                 error: wm.wm.protobuf.ErrorCode.ERR_SUCCESS,
                 candidates: lists_candidates,
-                localScore: 100
+                localScore: sum
             };
 
             // Encode the response

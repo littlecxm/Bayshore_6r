@@ -435,7 +435,7 @@ export default class GameModule extends Module {
 					ghostOpponentCar!.model = 105;
 					ghostOpponentCar!.visualModel = 130;
 					ghostOpponentCar!.regionId = 18;
-					ghostOpponentCar!.country = 'GLB';
+					ghostOpponentCar!.country = 'JPN';
 				}
 
 				if(ghostOpponentCar!.regionId === 0)
@@ -478,7 +478,7 @@ export default class GameModule extends Module {
 						ghostOpponentCar2!.model = 105;
 						ghostOpponentCar2!.visualModel = 130;
 						ghostOpponentCar2!.regionId = 18;
-						ghostOpponentCar2!.country = 'GLB';
+						ghostOpponentCar2!.country = 'JPN';
 					}
 
 					if(ghostOpponentCar!.regionId === 0)
@@ -518,7 +518,7 @@ export default class GameModule extends Module {
 						ghostOpponentCar3!.model = 105;
 						ghostOpponentCar3!.visualModel = 130;
 						ghostOpponentCar3!.regionId = 18;
-						ghostOpponentCar3!.country = 'GLB';
+						ghostOpponentCar3!.country = 'JPN';
 					}
 
 					if(ghostOpponentCar!.regionId === 0)

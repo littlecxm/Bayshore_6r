@@ -510,6 +510,8 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
 
                 // Update the updateNewTrail value
                 updateNewTrail = ghost_historys.updateNewTrail;
+
+                break;
             }
 
             // Ghost Battle Select by Other Place (15)
@@ -525,6 +527,8 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
 
                 // Update the updateNewTrail value
                 updateNewTrail = ghost_historys.updateNewTrail;
+
+                break;
             }
 
             // Ghost Battle Select by Manufacturer (16)
@@ -540,6 +544,8 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
 
                 // Update the updateNewTrail value
                 updateNewTrail = ghost_historys.updateNewTrail;
+
+                break;
             }
 
             // Ghost Battle Select by Other Manufacturer (17)
@@ -555,6 +561,8 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
 
                 // Update the updateNewTrail value
                 updateNewTrail = ghost_historys.updateNewTrail;
+
+                break;
             }
 
             // Ghost Battle Select by Played (18)
@@ -570,6 +578,8 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
 
                 // Update the updateNewTrail value
                 updateNewTrail = ghost_historys.updateNewTrail;
+
+                break;
             }
 
             // Ghost Battle Select by Region Manufacturer (20)
@@ -585,6 +595,8 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
 
                 // Update the updateNewTrail value
                 updateNewTrail = ghost_historys.updateNewTrail;
+
+                break;
             }
 
             // Ghost Battle Select by Region Played (22)
@@ -600,6 +612,8 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
 
                 // Update the updateNewTrail value
                 updateNewTrail = ghost_historys.updateNewTrail;
+
+                break;
             }
 
             // Ghost Battle Select by Region Station (23)
@@ -615,6 +629,8 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
 
                 // Update the updateNewTrail value
                 updateNewTrail = ghost_historys.updateNewTrail;
+
+                break;
             }
 
             // Ghost Battle Select by Region Boss (24)
@@ -630,6 +646,8 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
 
                 // Update the updateNewTrail value
                 updateNewTrail = ghost_historys.updateNewTrail;
+
+                break;
             }
 
             // Ghost Battle Select by Region Place (25)
@@ -645,6 +663,8 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
 
                 // Update the updateNewTrail value
                 updateNewTrail = ghost_historys.updateNewTrail;
+
+                break;
             }
         }
     }

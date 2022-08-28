@@ -55,57 +55,61 @@ export default class GhostModule extends Module {
 
             let ghostExpeditionRankings: wm.wm.protobuf.GhostExpeditionRankingEntry[] = []
 
-            let car = await prisma.car.findMany({
-                orderBy:{
-                    carId: 'asc'
-                },
-                include:{
-                    gtWing: true,
-                    lastPlayedPlace: true
-                }
-            });
-
+            // Get VSORG / Expedition Participant
             let localScores = await prisma.ghostExpedition.findMany({
                 where:{
                     ghostExpeditionId: 1
+                },
+                orderBy:{
+                    score: 'desc'
                 }
             })
 
-            let sum = 0;
+            // Get car score
+            let car;
+            let todaysMvps;
             for(let i=0; i<localScores.length; i++)
             {
-                sum += localScores[i].score;
-            }
+                car = await prisma.car.findFirst({
+                    where:{
+                        carId: localScores[i].carId
+                    },
+                    orderBy:{
+                        carId: 'asc'
+                    },
+                    include:{
+                        gtWing: true,
+                        lastPlayedPlace: true
+                    }
+                });
 
-            let todaysMvps;
-            if(car)
-            {    
-                for(let i=0; i<car.length; i++)
-                {
-                    let rankingScore = await prisma.ghostExpedition.findMany({
-                        orderBy:{
-                            score: 'desc'
-                        }
-                    }) 
-
+                
+                if(car)
+                {    
                     ghostExpeditionRankings.push(wm.wm.protobuf.GhostExpeditionRankingEntry.create({
                         rank: i+1,
-                        score: rankingScore[i].score,
-                        car: car[i]!
+                        score: localScores[i].score,
+                        car: car!
                     }));
 
                     if(i === 0)
                     {
                         todaysMvps = wm.wm.protobuf.GhostExpeditionRankingEntry.create({
                             rank: i+1,
-                            score: rankingScore[i].score,
-                            car: car[i]!
+                            score: localScores[i].score,
+                            car: car!
                         });
                     }
                 }
-                
+            }   
+
+            // Totaling score for store score
+            let sum = 0;
+            for(let i=0; i<localScores.length; i++)
+            {
+                sum += localScores[i].score;
             }
-            
+
             // Response data
             let msg = {
                 error: wm.wm.protobuf.ErrorCode.ERR_SUCCESS,

@@ -322,34 +322,38 @@ export default class UserModule extends Module {
             // Response data
 			let msg = {
 				error: wm.wm.protobuf.ErrorCode.ERR_SUCCESS,
-				numOfOwnedCars: user.cars.length,
-				spappState: wm.wm.protobuf.SmartphoneAppState.SPAPP_UNREGISTERED,
-				transferState: wm.wm.protobuf.TransferState.TRANSFERRED,
-				carStates,
-				userId: user.id,
+				unlockAt: null,
+				accessCode: null,
 				banapassportAmId: 1,
 				mbId: 1,
-				tutorials: user.tutorials,
-				unusedCarTickets: tickets,
-
-				// TODO: Make saving about this
-				ghostExpeditionLocked: false, 
-				fullTunedCarTicket: true,
-				ghostVs_2Locked: false,
-				ghostVs_3Locked: false,
-				ghostHighwayLocked: false,
+				userId: user.id,
+				numOfOwnedCars: user.cars.length,
 
 				// 5 cars in-game, 200 cars on terminal
 				cars: user.cars.slice(0, body.maxCars), 
 
-				// Set the window sticker string for all cars 
-				windowStickerString: wsString, 
-
-				// Set the window sticker font for all cars 
-				windowStickerFont: wsFont,
+				carStates,
+				unusedCarTickets: tickets,
+				fullTunedCarTicket: true, // hmmmm...
+				tutorials: user.tutorials,
 
 				// Set initial value for competition (OCM) participation
 				competitionUserState: wm.wm.protobuf.GhostCompetitionParticipantState.COMPETITION_NOT_PARTICIPATED,
+
+				// Set the window sticker string for all cars 
+				windowStickerString: wsString, 
+				windowStickerFont: wsFont,
+
+				spappState: wm.wm.protobuf.SmartphoneAppState.SPAPP_BNID,
+				transferState: wm.wm.protobuf.TransferState.TRANSFERRED,
+				wasCreatedToday: false,
+				participatedInInviteFriendCampaign: false,
+
+				// TODO: Make saving about this
+				ghostExpeditionLocked: false, 
+				ghostVs_2Locked: false,
+				ghostVs_3Locked: false,
+				ghostHighwayLocked: false,
 			}
 
 			

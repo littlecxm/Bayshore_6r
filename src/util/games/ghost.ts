@@ -80,6 +80,7 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
                 dressupPoint: common.sanitizeInput(ghostResult.dressupPoint),
                 stampSheet: common.sanitizeInput(ghostResult.stampSheet),
                 stampSheetCount: common.sanitizeInputNotZero(ghostResult.stampSheetCount),
+                rgTrophy: common.sanitizeInput(ghostResult.rgTrophy)
             }
 
             // Count total win based on region map score
@@ -96,7 +97,6 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
                 // Set the data 
                 dataGhost.rgWinCount = winCounter;
                 dataGhost.rgScore = winCounter;
-                dataGhost.rgTrophy = winCounter;
             }
         }
 

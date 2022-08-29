@@ -270,7 +270,7 @@ export default class ResourceModule extends Module {
                 list_ghost.push(wmsrv.wm.protobuf.Ranking.Entry.create({ 
                     carId: car_ghost[i].carId,
                     rank: car_ghost[i].level,
-                    result: car_ghost[i].rgWinCount,
+                    result: car_ghost[i].rgTrophy,
                     name: car_ghost[i].name,
                     regionId: car_ghost[i].regionId,
                     model: car_ghost[i].model,

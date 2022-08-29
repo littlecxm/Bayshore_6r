@@ -789,29 +789,7 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
         if (ghostResult)
         {
             dataGhost = {
-                rgRegionMapScore: common.sanitizeInput(ghostResult.rgRegionMapScore), 
                 rgPlayCount: common.sanitizeInput(ghostResult.rgPlayCount), 
-                dressupLevel: common.sanitizeInput(ghostResult.dressupLevel), 
-                dressupPoint: common.sanitizeInput(ghostResult.dressupPoint),
-                stampSheet: common.sanitizeInput(ghostResult.stampSheet),
-                stampSheetCount: common.sanitizeInputNotZero(ghostResult.stampSheetCount),
-                rgTrophy: common.sanitizeInput(ghostResult.rgTrophy)
-            }
-
-            // Count total win based on region map score
-            if(ghostResult.rgRegionMapScore && ghostResult.rgRegionMapScore.length !== 0)
-            {
-                let winCounter = 0;
-
-                // Count the total win
-                for(let i=0; i<ghostResult.rgRegionMapScore.length; i++)
-                {
-                    winCounter += ghostResult.rgRegionMapScore[i];
-                }
-                
-                // Set the data 
-                dataGhost.rgWinCount = winCounter;
-                dataGhost.rgScore = winCounter;
             }
 
             // Update the car properties
@@ -822,7 +800,46 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
                 data: {
                     ...dataGhost
                 }
-            }); 
+            });
+
+            // Making wanted car
+            let dataWantedGhost = {
+                carId: common.sanitizeInput(ghostResult.opponents![0].carId),
+                bonus: 0,
+                numOfHostages: 1,
+                defeatedMeCount: 1,
+            }
+
+            let checkWantedCar = await prisma.ghostExpeditionWantedCar.findFirst({
+                where:{
+                    carId: dataWantedGhost.carId
+                }
+            })
+
+            if(checkWantedCar)
+            {
+                console.log('Updating Wanted Car');
+
+                dataWantedGhost.bonus = checkWantedCar.bonus + 1;
+                dataWantedGhost.numOfHostages = checkWantedCar.numOfHostages + 1;
+                dataWantedGhost.defeatedMeCount = checkWantedCar.defeatedMeCount + 1;
+
+                await prisma.ghostExpeditionWantedCar.update({
+                    where:{
+                        dbId: checkWantedCar.dbId
+                    },
+                    data: dataWantedGhost
+                })
+            }
+            else
+            {
+                console.log('Creating Wanted Car');
+
+                await prisma.ghostExpeditionWantedCar.create({
+                    data: dataWantedGhost
+                })
+            }
+            
         }
 
         // Get the ghost expedition result for the car

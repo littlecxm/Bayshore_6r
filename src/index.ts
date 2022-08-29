@@ -33,7 +33,7 @@ const PORT_BNGI = 9002;
 const app = express();
 app.use(bodyParser.raw({
     type: '*/*',
-    limit: '50mb' // idk.. i got PayloadTooLargeError: request entity too large
+    limit: '50mb' // idk.. i got PayloadTooLargeError: request entity too large (adding this solve the problem)
 }));
 
 let useSentry = !!Config.getConfig().sentryDsn;

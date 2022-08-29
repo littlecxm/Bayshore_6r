@@ -506,57 +506,17 @@ export async function saveVSORGGhostHistory(body: wm.protobuf.SaveGameResultRequ
     {
         if(rgResult.opponents)
         {
-            // Get how many opponents available
-            for(let i=0; i<rgResult.opponents.length; i++)
-            { 
-                // First opponent data
-                if(i == 0)
-                { 
-                    // Get first opponent carId
-                    saveExGhostHistory.opponent1CarId = rgResult.opponents[0].carId; 
+            // Get first opponent carId
+            saveExGhostHistory.opponent1CarId = rgResult.opponents[0].carId; 
 
-                    // Get first opponent tunePower
-                    saveExGhostHistory.opponent1TunePower = rgResult.opponents[0].tunePower; 
+            // Get first opponent tunePower
+            saveExGhostHistory.opponent1TunePower = rgResult.opponents[0].tunePower; 
 
-                    // Get first opponent tunePower
-                    saveExGhostHistory.opponent1TuneHandling = rgResult.opponents[0].tuneHandling; 
+            // Get first opponent tunePower
+            saveExGhostHistory.opponent1TuneHandling = rgResult.opponents[0].tuneHandling; 
 
-                    // Get the advantage distance between first opponent and user
-                    saveExGhostHistory.opponent1Result = rgResult.opponents[0].result; 
-                }
-
-                // Second opponent data
-                else if(i == 1)
-                { 
-                    // Get second opponent carId
-                    saveExGhostHistory.opponent2CarId = rgResult.opponents[1].carId; 
-
-                    // Get second opponent tunePower
-                    saveExGhostHistory.opponent2TunePower = rgResult.opponents[1].tunePower; 
-
-                    // Get second opponent tuneHandling
-                    saveExGhostHistory.opponent2TuneHandling = rgResult.opponents[1].tuneHandling; 
-
-                    // Get the advantage distance between second opponent and user
-                    saveExGhostHistory.opponent2Result = rgResult.opponents[1].result; 
-                }
-
-                // Third opponent data
-                else if(i == 2)
-                { 
-                    // Get third opponent carId
-                    saveExGhostHistory.opponent3CarId = rgResult.opponents[2].carId;  
-
-                    // Get third opponent tunePower
-                    saveExGhostHistory.opponent3TunePower = rgResult.opponents[2].tunePower; 
-
-                    // Get third opponent tuneHandling
-                    saveExGhostHistory.opponent3TuneHandling = rgResult.opponents[2].tuneHandling; 
-
-                    // Get the advantage distance between third opponent and user
-                    saveExGhostHistory.opponent3Result = rgResult.opponents[2].result; 
-                }
-            }
+            // Get the advantage distance between first opponent and user
+            saveExGhostHistory.opponent1Result = rgResult.opponents[0].result; 
         }
 
         // Get played Area
@@ -571,6 +531,67 @@ export async function saveVSORGGhostHistory(body: wm.protobuf.SaveGameResultRequ
     await prisma.ghostBattleRecord.create({
         data: saveExGhostHistory
     });
+
+    // Check if defeating Wanted car
+    let checkWantedCar = await prisma.ghostExpeditionWantedCar.findFirst({
+        where:{
+            carId: rgResult!.opponents![0].carId
+        }
+    })
+
+    // Wanted car available
+    if(checkWantedCar)
+    {
+        if(rgResult!.opponents![0].result > 0)
+        {
+            console.log('Wanted Car Defeated');
+
+            await prisma.ghostExpeditionWantedCar.delete({
+                where:{
+                    dbId: checkWantedCar.dbId
+                }
+            })
+        }
+        else
+        {
+            console.log('Lose from Wanted Car');
+
+            // Making wanted car
+            let dataWantedGhost = {
+                carId: common.sanitizeInput(rgResult!.opponents![0].carId),
+                bonus: checkWantedCar.bonus + 1,
+                numOfHostages: checkWantedCar.numOfHostages + 1,
+                defeatedMeCount: checkWantedCar.defeatedMeCount + 1
+            }
+
+            await prisma.ghostExpeditionWantedCar.update({
+                where:{
+                    dbId: checkWantedCar.dbId
+                },
+                data: dataWantedGhost
+            })
+        }
+    }
+    // If lose the race maybe
+    else
+    {
+        if(rgResult!.opponents![0].result < 0)
+        {
+            // Making wanted car
+            let dataWantedGhost = {
+                carId: common.sanitizeInput(rgResult!.opponents![0].carId),
+                bonus: 0,
+                numOfHostages: 1,
+                defeatedMeCount: 1,
+            }
+
+            console.log('Creating Wanted Car');
+
+            await prisma.ghostExpeditionWantedCar.create({
+                data: dataWantedGhost
+            })
+        }
+    }
 
     // Sending stamp to opponents
     await ghost_stamp.sendStamp(body);

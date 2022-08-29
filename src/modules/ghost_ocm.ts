@@ -251,25 +251,25 @@ export default class GhostModule extends Module {
 							{
 								itemId = 35;
 							}
-							// 20th - Kobe
-							else if(ocmEventDate.competitionId === 6) 
-							{
-								itemId = 228;
-							}
 							// 7th - Fukutoshin
-							else if(ocmEventDate.competitionId === 7) 
+							else if(ocmEventDate.competitionId === 6) 
 							{
 								itemId = 41;
 							}
-							// 21st - Hiroshima
-							else if(ocmEventDate.competitionId === 8) 
-							{
-								itemId = 234;
-							}
 							// 8th - Hakone
-							else if(ocmEventDate.competitionId === 9) 
+							else if(ocmEventDate.competitionId === 7) 
 							{
 								itemId = 47;
+							}
+							// 20th - Kobe
+							else if(ocmEventDate.competitionId === 8) 
+							{
+								itemId = 228;
+							}
+							// 21st - Hiroshima
+							else if(ocmEventDate.competitionId === 9) 
+							{
+								itemId = 234;
 							}
 							// 1st - C1
 							else if(ocmEventDate.competitionId === 10) 

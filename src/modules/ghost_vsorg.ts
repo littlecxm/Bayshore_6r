@@ -4,6 +4,7 @@ import { prisma } from "..";
 
 // Import Proto
 import * as wm from "../wmmt/wm.proto";
+import * as wmsrv from "../wmmt/service.proto";
 
 // Import Util
 import * as common from "../util/common";
@@ -50,80 +51,6 @@ export default class GhostModule extends Module {
             // Send the response to the client
             common.sendResponse(message, res);
 		})
-
-        app.get('/resource/ghost_expedition_ranking', async (req, res) => {	
-
-            let ghostExpeditionRankings: wm.wm.protobuf.GhostExpeditionRankingEntry[] = []
-
-            // Get VSORG / Expedition Participant
-            let localScores = await prisma.ghostExpedition.findMany({
-                where:{
-                    ghostExpeditionId: 1
-                },
-                orderBy:{
-                    score: 'desc'
-                }
-            })
-
-            // Get car score
-            let car;
-            let todaysMvps;
-            for(let i=0; i<localScores.length; i++)
-            {
-                car = await prisma.car.findFirst({
-                    where:{
-                        carId: localScores[i].carId
-                    },
-                    orderBy:{
-                        carId: 'asc'
-                    },
-                    include:{
-                        gtWing: true,
-                        lastPlayedPlace: true
-                    }
-                });
-
-                
-                if(car)
-                {    
-                    ghostExpeditionRankings.push(wm.wm.protobuf.GhostExpeditionRankingEntry.create({
-                        rank: i+1,
-                        score: localScores[i].score,
-                        car: car!
-                    }));
-
-                    if(i === 0)
-                    {
-                        todaysMvps = wm.wm.protobuf.GhostExpeditionRankingEntry.create({
-                            rank: i+1,
-                            score: localScores[i].score,
-                            car: car!
-                        });
-                    }
-                }
-            }   
-
-            // Totaling score for store score
-            let sum = 0;
-            for(let i=0; i<localScores.length; i++)
-            {
-                sum += localScores[i].score;
-            }
-
-            // Response data
-            let msg = {
-                error: wm.wm.protobuf.ErrorCode.ERR_SUCCESS,
-                localScore: sum,
-                todaysMvp: todaysMvps || null,
-                localRanking: ghostExpeditionRankings || null
-            };
-
-            // Encode the response
-			let message = wm.wm.protobuf.GhostExpeditionRanking.encode(msg);
-
-            // Send the response to the client
-            common.sendResponse(message, res);
-        })
 
         
         app.post('/method/load_ghost_expedition_target_by_path', async (req, res) => {
@@ -203,6 +130,44 @@ export default class GhostModule extends Module {
 					pathVal = Math.floor(Math.random() * 2) + 56;
 				}
 
+                // Get Wanted List
+                let wantedInfo: wm.wm.protobuf.LoadGhostExpeditionTargetByPathResponse.AreaStats.WantedInfo[] = [];
+
+                let checkWantedList = await prisma.ghostExpeditionWantedCar.findMany({
+                    where:{
+                        ghostExpeditionId: 1,
+                        area: j
+                    },
+                    orderBy:{
+                        bonus: 'desc'
+                    }
+                })
+
+
+                /* GAME SOMETIMES BUT MOSTLY WILL CRASH IF I ADD WANTED INFO... HUH?!?!?!??!?!?! WTF GAME?!?!?
+                if(checkWantedList.length > 0)
+                {
+                    wantedInfo.push(wm.wm.protobuf.LoadGhostExpeditionTargetByPathResponse.AreaStats.WantedInfo.create({
+                        wantedLevel: checkWantedList[0].bonus,
+                        numOfWantedCars: checkWantedList.length
+                    }))
+
+                    areaExpedition.push(wm.wm.protobuf.LoadGhostExpeditionTargetByPathResponse.AreaStats.create({
+                        area: areaVal,
+                        path: pathVal,
+                        wantedInfo: wantedInfo
+                    }));
+                }
+                else
+                {
+                    areaExpedition.push(wm.wm.protobuf.LoadGhostExpeditionTargetByPathResponse.AreaStats.create({
+                        area: areaVal,
+                        path: pathVal,
+                        wantedInfo: null
+                    }));
+                } */
+
+
                 areaExpedition.push(wm.wm.protobuf.LoadGhostExpeditionTargetByPathResponse.AreaStats.create({
                     area: areaVal,
                     path: pathVal,
@@ -229,8 +194,28 @@ export default class GhostModule extends Module {
             let body = wm.wm.protobuf.LoadGhostExpeditionTargetsRequest.decode(req.body);
 
             let lists_candidates: wm.wm.protobuf.GhostCar[] = [];
+            let lists_wanted: wm.wm.protobuf.WantedCar[] = [];
+
+            // Check wanted car
+            let wantedCarList = await prisma.ghostExpeditionWantedCar.findMany({
+                where:{
+                    ghostExpeditionId: 1
+                },
+            })
+
+            let arrayWantedCarId = [];
+            
+            for(let i=0; i<wantedCarList.length; i++)
+            {
+                arrayWantedCarId.push(wantedCarList[i].carId);
+            }
 
             let car = await prisma.car.findMany({
+                where:{
+                    NOT: {
+                        carId: { in: arrayWantedCarId },
+                    }
+                },
                 include:{
                     gtWing: true,
                     lastPlayedPlace: true
@@ -244,78 +229,63 @@ export default class GhostModule extends Module {
             })
 
             let sum = 0;
+            let area = 0;
+            let path = 0;
+
             for(let i=0; i<localScores.length; i++)
             {
                 sum += localScores[i].score;
             }
 
-            if(car)
+            if(car.length > 0)
             {
                 // Get the area id and ramp id
-                let area = 0;
-                let ramp = 0;
-                let path = 0;
                 if(body.path)
                 {
                     if(body.path >= 0 && body.path <= 9){ // GID_PATH_C1
                         area = Number(0);
-                        ramp = Number(Math.floor(Math.random() * 4));
                     }
                     else if(body.path >= 10 && body.path <= 15){ // GID_PATH_N9
                         area = Number(1);
-                        ramp = Number(Math.floor(Math.random() * 2) + 4);
                     }
                     else if(body.path >= 16 && body.path <= 17){ // GID_PATH_WTEAST
                         area = Number(2);
-                        ramp = Number(Math.floor(Math.random() * 2) + 6);
                     }
                     else if(body.path >= 18 && body.path <= 19){ // GID_PATH_WT_UP_DOWN
                         area = Number(3);
-                        ramp = Number(Math.floor(Math.random() * 2) + 8);
                     }
                     else if(body.path >= 20 && body.path <= 26){ // GID_PATH_WG
                         area = Number(4);
-                        ramp = Number(Math.floor(Math.random() * 4) + 10);
                     }
                     else if(body.path >= 27 && body.path <= 33){ // GID_PATH_KG
                         area = Number(5);
-                        ramp = Number(Math.floor(Math.random() * 4) + 14);
                     }
                     else if(body.path >= 34 && body.path <= 37){ // GID_PATH_YS
                         area = Number(6);
-                        ramp = Number(Math.floor(Math.random() * 3) + 18);
                     }
                     else if(body.path >= 38 && body.path <= 48){ // GID_PATH_KG_SHINYAMASHITA_MINATOMIRAI
                         area = Number(7);
-                        ramp = Number(Math.floor(Math.random() * 4) + 21);
                     }
                     else if(body.path === 49){ // GID_PATH_NGR
                         area = Number(8);
-                        ramp = Number(25);
                     }
                     else if(body.path >= 50 && body.path <= 53){ // GID_PATH_OS
                         area = Number(9);
-                        ramp = Number(26);
                     }
                     else if(body.path >= 54 && body.path <= 55){ // GID_PATH_KB
                         area = Number(10);
-                        ramp = Number(Math.floor(Math.random() * 2) + 27);
                     }
                     else if(body.path >= 58 && body.path <= 61){ // GID_PATH_FK
                         area = Number(11);
-                        ramp = Number(Math.floor(Math.random() * 4) + 29);
                     }
                     else if(body.path >= 62 && body.path <= 63){ // GID_PATH_HK
                         area = Number(12);
-                        ramp = Number(Math.floor(Math.random() * 2) + 33);
                     }
                     else if(body.path >= 64 && body.path <= 65){ // GID_PATH_TP
                         area = Number(13);
-                        ramp = Number(Math.floor(Math.random() * 2) + 35);
                     }
                     else if(body.path >= 56 && body.path <= 57){ // GID_PATH_HS
                         area = Number(18);
-                        ramp = Number(Math.floor(Math.random() * 2) + 27);
                     }
 
                     path = Number(body.path);
@@ -328,24 +298,74 @@ export default class GhostModule extends Module {
                     lists_candidates.push(wm.wm.protobuf.GhostCar.create({
                         car: car[i],
                         area: area,
-                        ramp: ramp,
                         path: path,
                         nonhuman: false,
                         type: wm.wm.protobuf.GhostType.GHOST_REGION,
-                    }));
+                    })); 
                 }
-                
+            }
+          
+
+            // Get Wanted List
+            for(let i=0; i<wantedCarList.length; i++)
+            {
+                let wantedCar = await prisma.car.findFirst({
+                    where:{
+                        carId: wantedCarList[i].carId
+                    },
+                    include:{
+                        gtWing: true,
+                        lastPlayedPlace: true
+                    }
+                })
+
+                if(wantedCar)
+                {
+                    let ghostcar = wm.wm.protobuf.GhostCar.create({
+                        car: wantedCar,
+                        area: area,
+                        path: path,
+                        nonhuman: false,
+                        type: wm.wm.protobuf.GhostType.GHOST_REGION,
+                    });
+
+                    lists_wanted.push(wm.wm.protobuf.WantedCar.create({
+                        ghost: ghostcar,
+                        wantedId: i,
+                        bonus: wantedCarList[i].bonus,
+                        numOfHostages: wantedCarList[i].numOfHostages
+                    }))
+                }  
             }
 
             // Response data
             let msg = {
                 error: wm.wm.protobuf.ErrorCode.ERR_SUCCESS,
                 candidates: lists_candidates,
-                localScore: sum
+                localScore: sum,
+                wantedCars:  lists_wanted
             };
 
             // Encode the response
 			let message = wm.wm.protobuf.LoadGhostExpeditionTargetsResponse.encode(msg);
+
+            // Send the response to the client
+            common.sendResponse(message, res);
+        })
+
+        
+        app.post('/method/lock_wanted', async (req, res) => {
+
+            // Get the request body for the load stamp target request
+            let body = wmsrv.wm.protobuf.LockWantedRequest.decode(req.body);
+
+            // Response data
+            let msg = {
+                error: wm.wm.protobuf.ErrorCode.ERR_SUCCESS,
+            };
+
+            // Encode the response
+			let message = wmsrv.wm.protobuf.LockWantedResponse.encode(msg);
 
             // Send the response to the client
             common.sendResponse(message, res);

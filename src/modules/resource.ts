@@ -460,7 +460,6 @@ export default class ResourceModule extends Module {
 
 			// Response data
 			let msg = {
-				error: wm.wm.protobuf.ErrorCode.ERR_SUCCESS,
                 files: null,
                 interval: null
 			}
@@ -481,7 +480,6 @@ export default class ResourceModule extends Module {
 
 			// Response data
             let msg = {
-				error: wmsrv.wm.protobuf.ErrorCode.ERR_SUCCESS,
                 ghosts: null
 			};
 
@@ -491,5 +489,130 @@ export default class ResourceModule extends Module {
 			// Send the response to the client
             common.sendResponse(message, res);
 		})
+
+
+        app.get('/resource/ghost_expedition_ranking', async (req, res) => {	
+
+            console.log('ghost_expedition_ranking');
+
+            let ghostExpeditionRankings: wm.wm.protobuf.GhostExpeditionRankingEntry[] = []
+
+            // Get VSORG / Expedition Participant
+            let localScores = await prisma.ghostExpedition.findMany({
+                where:{
+                    ghostExpeditionId: 1
+                },
+                orderBy:{
+                    score: 'desc'
+                }
+            })
+
+            // Get car score
+            let car;
+            let todaysMvps;
+            for(let i=0; i<localScores.length; i++)
+            {
+                car = await prisma.car.findFirst({
+                    where:{
+                        carId: localScores[i].carId
+                    },
+                    orderBy:{
+                        carId: 'asc'
+                    },
+                    include:{
+                        gtWing: true,
+                        lastPlayedPlace: true
+                    }
+                });
+
+                
+                if(car)
+                {    
+                    ghostExpeditionRankings.push(wm.wm.protobuf.GhostExpeditionRankingEntry.create({
+                        rank: i+1,
+                        score: localScores[i].score,
+                        car: car!
+                    }));
+
+                    if(i === 0)
+                    {
+                        todaysMvps = wm.wm.protobuf.GhostExpeditionRankingEntry.create({
+                            rank: i+1,
+                            score: localScores[i].score,
+                            car: car!
+                        });
+                    }
+                }
+            }   
+
+            // Totaling score for store score
+            let sum = 0;
+            for(let i=0; i<localScores.length; i++)
+            {
+                sum += localScores[i].score;
+            }
+
+            // Response data
+            let msg = {
+                localScore: sum,
+                todaysMvp: todaysMvps || null,
+                localRanking: ghostExpeditionRankings || null
+            };
+
+            // Encode the response
+			let message = wm.wm.protobuf.GhostExpeditionRanking.encode(msg);
+
+            // Send the response to the client
+            common.sendResponse(message, res);
+        })
+
+        
+        
+        app.get('/resource/lock_wanted_list', async (req, res) => {
+
+            console.log('lock_wanted_list');
+
+            let wanteds: wm.wm.protobuf.WantedCar[] = [];
+
+            // Check wanted car
+            /*let wantedCarList = await prisma.ghostExpeditionWantedCar.findMany({
+                where:{
+                    ghostExpeditionId: 1
+                },
+                orderBy:{
+                    dbId: 'desc'
+                }
+            })
+
+            if(wantedCarList.length > 0)
+            {
+                for(let i=0; i<wantedCarList.length; i++)
+                {
+                    let wantedCar = await prisma.car.findFirst({
+                        where:{
+                            carId: wantedCarList[i].carId
+                        }
+                    })
+
+                    let ghostcar = wm.wm.protobuf.GhostCar.create({
+                        car: wantedCar!,
+                        area: wantedCarList[i].area,
+                    });
+
+                    wanteds.push(wm.wm.protobuf.WantedCar.create({
+                        ghost: ghostcar,
+                        wantedId: i,
+                        bonus: wantedCarList[i].bonus,
+                        numOfHostages: wantedCarList[i].numOfHostages
+                    }))
+                }
+            }*/
+
+            // Encode the response
+			let message = wmsrv.wm.protobuf.LockWantedList.encode({wanteds});
+
+            // Send the response to the client
+            common.sendResponse(message, res);
+        })
     }
 }

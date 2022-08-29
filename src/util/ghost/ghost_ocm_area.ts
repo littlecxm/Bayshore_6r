@@ -65,20 +65,8 @@ export async function OCMArea(competition_id: number)
         // GID_PATH_C1IN_KANDABASHI02
         pathVal = 1;
     }
-    // 20th - Kobe
-    else if(competition_id === 6) 
-    { 
-        // GID_RUNAREA_KOBE
-        areaVal = 10;
-
-        // GID_RAMP_KOBE_NADAOOHASHI
-        rampVal = 28;
-
-        // GID_PATH_KB_NADA
-        pathVal = 55;
-    }
     // 7th - Fukutoshin
-    else if(competition_id === 7) 
+    else if(competition_id === 6) 
     { 
         // GID_RUNAREA_SUBTOKYO_3_4
         areaVal = 2;
@@ -89,20 +77,8 @@ export async function OCMArea(competition_id: number)
         // GID_PATH_WTWEST_GAIEN
         pathVal = 17;
     }
-    // 21st - Hiroshima
-    else if(competition_id === 8) 
-    { 
-        // GID_RUNAREA_HIROSHIMA
-        areaVal = 18;
-
-        // GID_RAMP_HIROSHIMA_SHINONOME
-        rampVal = 37;
-
-        // GID_PATH_HS_SHINONOME
-        pathVal = 56;
-    }
     // 8th - Hakone
-    else if(competition_id === 9) 
+    else if(competition_id === 7) 
     { 
         // GID_RUNAREA_HAKONE
         areaVal = 12;
@@ -112,6 +88,30 @@ export async function OCMArea(competition_id: number)
 
         // GID_PATH_HKFOR
         pathVal = 62;
+    }
+    // 20th - Kobe
+    else if(competition_id === 8) 
+    { 
+        // GID_RUNAREA_KOBE
+        areaVal = 10;
+
+        // GID_RAMP_KOBE_NADAOOHASHI
+        rampVal = 28;
+
+        // GID_PATH_KB_NADA
+        pathVal = 55;
+    }
+    // 21st - Hiroshima
+    else if(competition_id === 9) 
+    { 
+        // GID_RUNAREA_HIROSHIMA
+        areaVal = 18;
+
+        // GID_RAMP_HIROSHIMA_SHINONOME
+        rampVal = 37;
+
+        // GID_PATH_HS_SHINONOME
+        pathVal = 56;
     }
 
     // Return the value to 'BASE_PATH/src/modules/ghost_ocm.ts'

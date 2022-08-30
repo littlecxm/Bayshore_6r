@@ -463,13 +463,15 @@ model GhostExpedition {
 }
 
 model GhostExpeditionWantedCar {
-  dbId                Int  @id @default(autoincrement())
-  car                 Car  @relation(fields: [carId], references: [carId])
+  dbId                Int       @id @default(autoincrement())
+  car                 Car       @relation(fields: [carId], references: [carId])
   carId               Int
-  bonus               Int  @default(0)
-  numOfHostages       Int  @default(0)
-  defeatedMeCount     Int  @default(0)
+  bonus               Int       @default(0)
+  numOfHostages       Int       @default(1)
+  defeatedMeCount     Int       @default(1)
   hostage             Int?
-  ghostExpeditionId   Int  @default(1)
-  area                Int  @default(0)
+  ghostExpeditionId   Int       @default(1)
+  area                Int       @default(0)
+  locked              Boolean   @default(false)
+  challengerCarId     Int?
 }

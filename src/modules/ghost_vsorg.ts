@@ -18,6 +18,7 @@ export default class GhostModule extends Module {
             // Get the request body for the load stamp target request
             let body = wm.wm.protobuf.LoadGhostExpeditionInfoRequest.decode(req.body);
 
+            // Get User data
             let userScores = await prisma.ghostExpedition.findFirst({
                 where:{
                     carId: body.carId,
@@ -25,16 +26,17 @@ export default class GhostModule extends Module {
                 }
             })
 
+            // Get local store score
             let localScores = await prisma.ghostExpedition.findMany({
                 where:{
                     ghostExpeditionId: 1
                 }
             })
 
-            let sum = 0;
+            let sumLocalScore = 0;
             for(let i=0; i<localScores.length; i++)
             {
-                sum += localScores[i].score;
+                sumLocalScore += localScores[i].score;
             }
 
             // Response data
@@ -42,7 +44,7 @@ export default class GhostModule extends Module {
                 error: wm.wm.protobuf.ErrorCode.ERR_SUCCESS,
                 sugorokuPoint: userScores?.sugorokuPoint || 0,
                 score: userScores?.score || 0,
-                localScore: sum,
+                localScore: sumLocalScore,
             };
 
             // Encode the response
@@ -167,8 +169,7 @@ export default class GhostModule extends Module {
                         path: pathVal,
                         wantedInfo: null
                     }));
-                } */
-
+                }*/
 
                 areaExpedition.push(wm.wm.protobuf.LoadGhostExpeditionTargetByPathResponse.AreaStats.create({
                     area: areaVal,
@@ -232,13 +233,35 @@ export default class GhostModule extends Module {
                 }
             })
 
-            let sum = 0;
+            let sumLocalScore = 0;
             let area = 0;
             let path = 0;
 
+            // Get store result performance
+            let recentWinners: wm.wm.protobuf.CarEntry[] = []
+
             for(let i=0; i<localScores.length; i++)
             {
-                sum += localScores[i].score;
+                sumLocalScore += localScores[i].score;
+
+                if(localScores[i].carId !== body.carId)
+                {
+                    let car = await prisma.car.findFirst({
+                        where:{
+                            carId: localScores[i].carId
+                        }
+                    })
+
+                    recentWinners.push(wm.wm.protobuf.CarEntry.create({
+                        name: car!.name,
+                        level: car!.level,
+                        title: car!.title,
+                        model: car!.model,
+                        visualModel: car!.visualModel,
+                        defaultColor: car!.defaultColor,
+                        score: localScores[i].score,
+                    }))
+                }
             }
 
             if(car.length > 0)
@@ -346,16 +369,16 @@ export default class GhostModule extends Module {
 						model: car!.model,
 						visualModel: car!.visualModel,
                         defaultColor: car!.defaultColor,
-                        score: wantedCarList[i].bonus,
+                        score: wantedCarList[i].bonus, // idk what this is
                     })
 
                     lists_wanted.push(wm.wm.protobuf.WantedCar.create({
                         ghost: ghostcar,
-                        wantedId: i,
-                        bonus: wantedCarList[i].bonus,
-                        numOfHostages: 1,
-                        defeatedMeCount: wantedCarList[i].defeatedMeCount,
-                        hostage: hostages
+                        wantedId: i, // id?
+                        bonus: wantedCarList[i].bonus, // for bonus win store
+                        numOfHostages: 1, // idk what this is for
+                        defeatedMeCount: wantedCarList[i].defeatedMeCount, // for bonus movements
+                        hostage: hostages // idk what this is for
                     }))
                 }  
             }
@@ -364,8 +387,9 @@ export default class GhostModule extends Module {
             let msg = {
                 error: wm.wm.protobuf.ErrorCode.ERR_SUCCESS,
                 candidates: lists_candidates,
-                localScore: sum,
-                wantedCars:  lists_wanted
+                localScore: sumLocalScore,
+                wantedCars:  lists_wanted,
+                recentWinners: recentWinners // store result performance
             };
 
             // Encode the response

@@ -140,11 +140,13 @@ export default class GhostModule extends Module {
                     },
                     orderBy:{
                         bonus: 'desc'
-                    }
+                    },
+                    take: 10
                 })
 
 
-                /* GAME SOMETIMES BUT MOSTLY WILL CRASH IF I ADD WANTED INFO... HUH?!?!?!??!?!?! WTF GAME?!?!?
+                // TODO: FIX THIS STUFF
+                /* GAME SOMETIMES BUT MOSTLY WILL CRASH IF I ADDED WANTED INFO... HUH?!?!?!??!?!?! WTF GAME?!?!?
                 if(checkWantedList.length > 0)
                 {
                     wantedInfo.push(wm.wm.protobuf.LoadGhostExpeditionTargetByPathResponse.AreaStats.WantedInfo.create({
@@ -178,7 +180,7 @@ export default class GhostModule extends Module {
             let msg = {
                 error: wm.wm.protobuf.ErrorCode.ERR_SUCCESS,
                 areas: areaExpedition,
-                selectionMethod: wm.wm.protobuf.PathSelectionMethod.PATH_NORMAL // idk what this is
+                selectionMethod: wm.wm.protobuf.PathSelectionMethod.PATH_CHALLENGER // idk what this is
             };
 
             // Encode the response
@@ -201,6 +203,7 @@ export default class GhostModule extends Module {
                 where:{
                     ghostExpeditionId: 1
                 },
+                take: 10
             })
 
             let arrayWantedCarId = [];
@@ -219,7 +222,8 @@ export default class GhostModule extends Module {
                 include:{
                     gtWing: true,
                     lastPlayedPlace: true
-                }
+                },
+                take: 10
             });
 
             let localScores = await prisma.ghostExpedition.findMany({
@@ -329,11 +333,29 @@ export default class GhostModule extends Module {
                         type: wm.wm.protobuf.GhostType.GHOST_REGION,
                     });
 
+                    let car = await prisma.car.findFirst({
+                        where:{
+                            carId: body.carId
+                        }
+                    })
+
+                    let hostages = wm.wm.protobuf.CarEntry.create({
+                        name: car!.name,
+                        level: car!.level,
+                        title: car!.title,
+						model: car!.model,
+						visualModel: car!.visualModel,
+                        defaultColor: car!.defaultColor,
+                        score: wantedCarList[i].bonus,
+                    })
+
                     lists_wanted.push(wm.wm.protobuf.WantedCar.create({
                         ghost: ghostcar,
                         wantedId: i,
                         bonus: wantedCarList[i].bonus,
-                        numOfHostages: wantedCarList[i].numOfHostages
+                        numOfHostages: 1,
+                        defeatedMeCount: wantedCarList[i].defeatedMeCount,
+                        hostage: hostages
                     }))
                 }  
             }

@@ -446,12 +446,12 @@ export async function saveVSORGGhostHistory(body: wm.protobuf.SaveGameResultRequ
             // Get current date
             let date = Math.floor(new Date().getTime() / 1000);
 
-            for(let i=0; i<body.earnedUserItems.length; i++)
+            for(let i=0; i<expeditionResult.earnedItems!.length; i++)
             {
                 await prisma.userItem.create({
                     data: {
-                        category: body.earnedUserItems[i].category,
-                        itemId: body.earnedUserItems[i].itemId,
+                        category: expeditionResult.earnedItems![i].category,
+                        itemId: expeditionResult.earnedItems![i].itemId,
                         userId: body.car!.userId!,
                         earnedAt: date,
                         type: 0
@@ -467,17 +467,18 @@ export async function saveVSORGGhostHistory(body: wm.protobuf.SaveGameResultRequ
             // Get current date
             let date = Math.floor(new Date().getTime() / 1000);
 
-            for(let i=0; i<body.earnedUserItems.length; i++)
+            for(let i=0; i<expeditionResult.aftereventBonus!.length; i++)
             {
+                /*
                 await prisma.userItem.create({
                     data: {
-                        category: body.earnedUserItems[i].category,
-                        itemId: body.earnedUserItems[i].itemId,
+                        category: expeditionResult.earnedItems![i].category,
+                        itemId: expeditionResult.earnedItems![i].itemId,
                         userId: body.car!.userId!,
                         earnedAt: date,
                         type: 0
                     }
-                });
+                });*/
             }
         }
     }

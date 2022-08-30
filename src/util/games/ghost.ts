@@ -821,7 +821,6 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
                 console.log('Updating Wanted Car');
 
                 dataWantedGhost.bonus = checkWantedCar.bonus + 1;
-                dataWantedGhost.numOfHostages = checkWantedCar.numOfHostages + 1;
                 dataWantedGhost.defeatedMeCount = checkWantedCar.defeatedMeCount + 1;
 
                 await prisma.ghostExpeditionWantedCar.update({

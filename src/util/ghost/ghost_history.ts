@@ -561,7 +561,6 @@ export async function saveVSORGGhostHistory(body: wm.protobuf.SaveGameResultRequ
             let dataWantedGhost = {
                 carId: common.sanitizeInput(rgResult!.opponents![0].carId),
                 bonus: checkWantedCar.bonus + 1,
-                numOfHostages: checkWantedCar.numOfHostages + 1,
                 defeatedMeCount: checkWantedCar.defeatedMeCount + 1
             }
 

@@ -62,6 +62,7 @@ export default class GhostModule extends Module {
 
             let areaExpedition: wm.wm.protobuf.LoadGhostExpeditionTargetByPathResponse.AreaStats[] = [];
 
+            // LOADED PATH IN THE GAME WHEN RACING STILL NOT CORRECT (HUH!?!?!)
             for(let j=0; j<19; j++)
 			{
                 // 14 - 16 are dummy area, 17 is C1 Closed
@@ -267,6 +268,7 @@ export default class GhostModule extends Module {
             if(car.length > 0)
             {
                 // Get the area id and ramp id
+                // LOADED PATH IN THE GAME WHEN RACING STILL NOT CORRECT (HUH!?!?!)
                 if(body.path)
                 {
                     if(body.path >= 0 && body.path <= 9){ // GID_PATH_C1

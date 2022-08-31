@@ -141,11 +141,11 @@ export async function ocmTallying(body: wm.protobuf.LoadGhostCompetitionInfoRequ
                     // Get the Top 1 Advantage
                     if(top1advantage === null)
                     {
-                        top1advantage = OCMTally[i].result;
+                        top1advantage = OCMTally[0].result;
 
                         let getTrail = await prisma.oCMGhostTrail.findFirst({
                             where:{
-                                carId: OCMTally[i].carId,
+                                carId: OCMTally[0].carId,
                                 competitionId: body.competitionId,
                                 ocmMainDraw: true
                             }
@@ -153,6 +153,7 @@ export async function ocmTallying(body: wm.protobuf.LoadGhostCompetitionInfoRequ
 
                         if(getTrail)
                         {
+                            console.log('Creating Trail');
                             await prisma.oCMTop1GhostTrail.create({
                                 data: {
                                     carId: getTrail.carId,
@@ -221,7 +222,8 @@ export async function ocmTallying(body: wm.protobuf.LoadGhostCompetitionInfoRequ
                     }
                     
 
-                    if(i === 0){
+                    if(i === 0)
+                    {
                         console.log('Making OCM Top 1 Ghost Data');
 
                         // Create Top 1 ghost data

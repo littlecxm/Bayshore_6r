@@ -255,7 +255,7 @@ export default class ResourceModule extends Module {
             // Get the user's Ghost Win data
             let car_ghost = await prisma.car.findMany({ 
                 orderBy: {
-					rgWinCount: 'desc'
+					rgTrophy: 'desc'
 				},
                 take: 20, // Take top 20
             });
@@ -283,7 +283,7 @@ export default class ResourceModule extends Module {
                  }));
             }
 
-            // If the Ghost Win record by user is less than 20 user
+            // If the Ghost Trophies record by user is less than 20 user
             if(car_ghost.length < 20){ 
 
                 // Take the remaining unfilled

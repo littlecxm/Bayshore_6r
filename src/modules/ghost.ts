@@ -763,7 +763,7 @@ export default class GhostModule extends Module {
 				let ghost_trails = await prisma.ghostTrail.findFirst({ 
 					where: {
 						carId: body.carTunings[i].carId!,
-						path: body.path,
+						path: path,
 					},
 					orderBy: {
 						playedAt: 'desc'
@@ -820,7 +820,6 @@ export default class GhostModule extends Module {
             // Response data
 			let msg = {
 				error: wm.wm.protobuf.ErrorCode.ERR_SUCCESS,
-				path: path,
 				data: lists_ghostcar
 			};
 

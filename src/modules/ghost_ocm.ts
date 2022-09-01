@@ -28,10 +28,10 @@ export default class GhostModule extends Module {
             // Get currently active OCM event (query still not complete)
 			let ocmEventDate = await prisma.oCMEvent.findFirst({ 
 				where: {
-					// qualifyingPeriodStartAt is less than current date
+					// qualifyingPeriodStartAt is less than equal current date
 					qualifyingPeriodStartAt: { lte: date },
 		
-					// competitionEndAt is greater than current date
+					// competitionEndAt is greater than equal current date
 					competitionEndAt: { gte: date },
 				},
                 orderBy:{
@@ -115,11 +115,11 @@ export default class GhostModule extends Module {
 							competitionId: ocmEventDate!.competitionId,
 							startAt: 
 							{
-								lte: date, // competitionStartAt is less than current date
+								lte: date, // competitionStartAt is less than equal current date
 							},
 							closeAt:
 							{
-								gte: date, // competitionCloseAt is greater than current date
+								gte: date, // competitionCloseAt is greater than equal current date
 							}
 						}
 					});
@@ -407,10 +407,10 @@ export default class GhostModule extends Module {
             // Get currently active OCM event
 			let ocmEventDate = await prisma.oCMEvent.findFirst({ 
                 where: {
-					// qualifyingPeriodStartAt is less than current date
+					// qualifyingPeriodStartAt is less than equal current date
 					qualifyingPeriodStartAt: { lte: date },
 		
-					// competitionEndAt is greater than current date
+					// competitionEndAt is greater than equal current date
 					competitionEndAt: { gte: date },
 				},
                 orderBy:{

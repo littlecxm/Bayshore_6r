@@ -52,10 +52,10 @@ export default class CarModule extends Module {
 			// Get current / previous active OCM Event
             let ocmEventDate = await prisma.oCMEvent.findFirst({
                 where: {
-					// qualifyingPeriodStartAt is less than current date
+					// qualifyingPeriodStartAt is less than equal current date
 					qualifyingPeriodStartAt: { lte: date },
 		
-					// competitionEndAt is greater than current date
+					// competitionEndAt is greater than equal current date
 					competitionEndAt: { gte: date },
 				},
                 orderBy: [

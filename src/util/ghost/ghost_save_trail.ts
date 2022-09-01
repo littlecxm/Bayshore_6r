@@ -15,10 +15,10 @@ export async function saveOCMGhostTrail(body: wm.protobuf.RegisterGhostTrailRequ
     // Get current active OCM Event
     let ocmEventDate = await prisma.oCMEvent.findFirst({
         where: {
-            // qualifyingPeriodStartAt is less than current date
+            // qualifyingPeriodStartAt is less than equal current date
             qualifyingPeriodStartAt: { lte: date },
 
-            // competitionEndAt is greater than current date
+            // competitionEndAt is greater than equal current date
             competitionEndAt: { gte: date },
         },
         orderBy:{
@@ -34,10 +34,10 @@ export async function saveOCMGhostTrail(body: wm.protobuf.RegisterGhostTrailRequ
                 competitionDbId: ocmEventDate.dbId,
                 competitionId: ocmEventDate.competitionId,
 
-                // StartAt is less than current date
+                // StartAt is less than equal current date
                 startAt: { lte: date },
 
-                // CloseAt is greater than current date
+                // CloseAt is greater than equal current date
                 closeAt: { gte: date }
             },
             select:{

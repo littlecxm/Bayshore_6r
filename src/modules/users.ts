@@ -319,6 +319,22 @@ export default class UserModule extends Module {
 			}
 			
 
+			// Check ghost trophy count if more than 50 or not
+			let ghostExpeditionLocked: boolean = true;
+			let checkRgTrophy = await prisma.car.findFirst({
+				where:{
+					userId: user.id,
+					rgTrophy:{
+						gte: 50 // greater than equal 50
+					}
+				}
+			})
+
+			if(checkRgTrophy)
+			{
+				ghostExpeditionLocked = false;
+			}
+
             // Response data
 			let msg = {
 				error: wm.wm.protobuf.ErrorCode.ERR_SUCCESS,
@@ -350,7 +366,7 @@ export default class UserModule extends Module {
 				participatedInInviteFriendCampaign: false,
 
 				// TODO: Make saving about this
-				ghostExpeditionLocked: false, 
+				ghostExpeditionLocked: ghostExpeditionLocked, // must more than 50 rgTrophy
 				ghostVs_2Locked: false,
 				ghostVs_3Locked: false,
 				ghostHighwayLocked: false,
@@ -368,10 +384,10 @@ export default class UserModule extends Module {
 			// Get current active OCM Event
 			let ocmEventDate = await prisma.oCMEvent.findFirst({
 				where: {
-					// qualifyingPeriodStartAt is less than current date
+					// qualifyingPeriodStartAt is less than equal current date
 					qualifyingPeriodStartAt: { lte: date },
 		
-					// competitionEndAt is greater than current date
+					// competitionEndAt is greater than equal current date
 					competitionEndAt: { gte: date },
 				},
 				orderBy:{

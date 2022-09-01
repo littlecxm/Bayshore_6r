@@ -717,10 +717,10 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
         // Get currently active OCM event
         let ocmEventDate = await prisma.oCMEvent.findFirst({ 
             where: {
-                // qualifyingPeriodStartAt is less than current date
+                // qualifyingPeriodStartAt is less than equal current date
                 qualifyingPeriodStartAt: { lte: date },
     
-                // competitionEndAt is greater than current date
+                // competitionEndAt is greater than equal current date
                 competitionEndAt: { gte: date },
             },
             orderBy:{

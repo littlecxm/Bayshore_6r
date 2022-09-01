@@ -285,6 +285,7 @@ export default class GhostModule extends Module {
                 arrayWantedCarId.push(wantedCarList[i].carId);
             }
 
+            // Get Canditate list
             let car = await prisma.car.findMany({
                 where:{
                     NOT: {
@@ -294,19 +295,54 @@ export default class GhostModule extends Module {
                 include:{
                     gtWing: true,
                     lastPlayedPlace: true
-                },
-                take: 10
+                }
             });
 
+            let arr = [];
+            let maxNumber = 0;
+
+            // If all user car data available is more than 10 for certain level
+			if(car.length > 10)
+			{ 
+				maxNumber = 10 // Limit to 10 (game default)
+			}
+            // If no more than 10
+			else
+			{
+				maxNumber = car.length;
+			}
+
+            while(arr.length < maxNumber)
+			{ 
+                // Pick random car Id
+				let randomNumber: number = Math.floor(Math.random() * car.length);
+
+                if(arr.indexOf(randomNumber) === -1)
+                {
+                    // Push current number to array
+					arr.push(randomNumber); 
+
+                    car[randomNumber].regionId = 20; // JPN
+
+                    // Push data to Ghost car proto
+                    lists_candidates.push(wm.wm.protobuf.GhostCar.create({
+                        car: car[randomNumber],
+                        area: area,
+                        ramp: ramp,
+                        path: path,
+                        nonhuman: false,
+                        type: wm.wm.protobuf.GhostType.GHOST_REGION,
+                    })); 
+                }
+            }
+
+            // Get store result performance
             let localScores = await prisma.ghostExpedition.findMany({
                 where:{
                     ghostExpeditionId: 1
                 }
             })
-
             let sumLocalScore = 0;
-
-            // Get store result performance
             let recentWinners: wm.wm.protobuf.CarEntry[] = []
 
             for(let i=0; i<localScores.length; i++)
@@ -330,24 +366,6 @@ export default class GhostModule extends Module {
                         defaultColor: car!.defaultColor,
                         score: localScores[i].score,
                     }))
-                }
-            }
-
-            if(car.length > 0)
-            {
-                for(let i=0; i<car.length; i++)
-                {
-                    car[i].regionId = 20; // JPN
-
-                    // Push data to Ghost car proto
-                    lists_candidates.push(wm.wm.protobuf.GhostCar.create({
-                        car: car[i],
-                        area: area,
-                        ramp: ramp,
-                        path: path,
-                        nonhuman: false,
-                        type: wm.wm.protobuf.GhostType.GHOST_REGION,
-                    })); 
                 }
             }
 

@@ -789,6 +789,9 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
         // Get the ghost result for the car
         let ghostResult = body?.rgResult;
 
+        // Get current date
+        let date = Math.floor(new Date().getTime() / 1000);
+
         // ghostResult is set
         let dataGhost: any;
         if (ghostResult)
@@ -893,9 +896,6 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
             {
                 console.log('User Item reward from VSORG available, continuing ...');
 
-                // Get current date
-                let date = Math.floor(new Date().getTime() / 1000);
-
 				for(let i=0; i<expeditionResult.earnedItems!.length; i++)
                 {
 					await prisma.userItem.create({
@@ -914,9 +914,6 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
             {
                 console.log('User Item after event reward from VSORG available, continuing ...');
 
-                // Get current date
-                let date = Math.floor(new Date().getTime() / 1000);
-
                 for(let i=0; i<expeditionResult.aftereventBonus!.length; i++)
                 {
                     /*
@@ -931,6 +928,38 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
                     });*/
                 }
             }
+        }
+
+        // Check full tune ticket piece
+        let checkFTTicketPiece = await prisma.userItem.findMany({
+            where:{
+                userId: body.car!.userId!,
+                category: 202,
+                itemId: 2
+            }
+        });
+
+        if(checkFTTicketPiece.length >= 6)
+        {
+            // Give full tune ticket :)
+            await prisma.userItem.create({
+                data:{
+                    userId: body.car!.userId!,
+                    category: 203,
+                    itemId: 5,
+                    type: 0,
+                    earnedAt: date
+                }
+            });
+            
+            // Remove full tune ticket piece :(
+            await prisma.userItem.deleteMany({
+                where:{
+                    userId: body.car!.userId!,
+                    category: 202,
+                    itemId: 2,
+                }
+            });
         }
     }
     // TODO: Highway Ghost Mode Retiring Saving

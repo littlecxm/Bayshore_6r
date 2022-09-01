@@ -399,6 +399,9 @@ export async function saveVSORGGhostHistory(body: wm.protobuf.SaveGameResultRequ
     // Get the ghost expedition result for the car
     let expeditionResult = body.rgResult?.expeditionResult;
 
+    // Get current date
+    let date = Math.floor(new Date().getTime() / 1000);
+
     // expeditionResult is set
     if (expeditionResult)
     {
@@ -591,6 +594,38 @@ export async function saveVSORGGhostHistory(body: wm.protobuf.SaveGameResultRequ
                 data: dataWantedGhost
             })
         }
+    }
+
+    // Check full tune ticket piece
+    let checkFTTicketPiece = await prisma.userItem.findMany({
+        where:{
+            userId: body.car!.userId!,
+            category: 202,
+            itemId: 2
+        }
+    });
+
+    if(checkFTTicketPiece.length >= 6)
+    {
+        // Give full tune ticket :)
+        await prisma.userItem.create({
+            data:{
+                userId: body.car!.userId!,
+                category: 203,
+                itemId: 5,
+                type: 0,
+                earnedAt: date
+            }
+        });
+        
+        // Remove full tune ticket piece :(
+        await prisma.userItem.deleteMany({
+            where:{
+                userId: body.car!.userId!,
+                category: 202,
+                itemId: 2,
+            }
+        });
     }
 
     // Sending stamp to opponents

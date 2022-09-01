@@ -572,7 +572,7 @@ export default class ResourceModule extends Module {
 
             console.log('lock_wanted_list');
 
-            let wanteds: wm.wm.protobuf.WantedCar[] = [];
+            let wanteds: wmsrv.wm.protobuf.WantedCar[] = [];
 
             // Check wanted car
             /*let wantedCarList = await prisma.ghostExpeditionWantedCar.findMany({
@@ -601,7 +601,7 @@ export default class ResourceModule extends Module {
 
                     wanteds.push(wm.wm.protobuf.WantedCar.create({
                         ghost: ghostcar,
-                        wantedId: i,
+                        wantedId: wantedCarList[i].carId,
                         bonus: wantedCarList[i].bonus,
                         numOfHostages: wantedCarList[i].numOfHostages
                     }))

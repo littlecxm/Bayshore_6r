@@ -147,7 +147,7 @@ export default class GhostModule extends Module {
                 })
 
                 // TODO: FIX THIS STUFF
-                // GAME SOMETIMES BUT MOSTLY WILL CRASH IF I ADDED WANTED INFO... HUH?!?!?!??!?!?! WTF GAME?!?!?
+                /* GAME SOMETIMES BUT MOSTLY WILL CRASH IF I ADDED WANTED INFO... HUH?!?!?!??!?!?! WTF GAME?!?!?
                 if(checkWantedList.length > 0)
                 {
                     wantedInfo.push(wm.wm.protobuf.LoadGhostExpeditionTargetByPathResponse.AreaStats.WantedInfo.create({
@@ -168,13 +168,13 @@ export default class GhostModule extends Module {
                         path: pathVal,
                         wantedInfo: null
                     }));
-                }/*
+                }*/
                 
                 areaExpedition.push(wm.wm.protobuf.LoadGhostExpeditionTargetByPathResponse.AreaStats.create({
                     area: areaVal,
                     path: pathVal,
                     wantedInfo: null
-                }));*/
+                }));
             }
 
             let msg = {
@@ -272,7 +272,7 @@ export default class GhostModule extends Module {
             // Check wanted car
             let wantedCarList = await prisma.ghostExpeditionWantedCar.findMany({
                 where:{
-                    ghostExpeditionId: 1,
+                    ghostExpeditionId: body.ghostExpeditionId,
                     area: area
                 },
                 take: 10

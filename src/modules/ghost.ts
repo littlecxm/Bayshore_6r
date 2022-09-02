@@ -592,7 +592,7 @@ export default class GhostModule extends Module {
 					{
 						ghost_default_cars = await ghost_default_car.DefaultGhostCarBMW();
 					}
-					else if(body.selectManufacturer === 1) // Chevrolet
+					else if(body.selectManufacturer === 1) // CHEVROLET
 					{
 						ghost_default_cars = await ghost_default_car.DefaultGhostCarChevrolet();
 					}
@@ -600,38 +600,44 @@ export default class GhostModule extends Module {
 					{
 						ghost_default_cars = await ghost_default_car.DefaultGhostCarMazda();
 					}
-					/*else if(body.selectManufacturer === 3) // ???
+					else if(body.selectManufacturer === 3) // MERCEDES BENZ
 					{
 						// TODO: default car here
+						ghost_default_cars = await ghost_default_car.DefaultGhostCarMercedes();
 					}
 					else if(body.selectManufacturer === 4) // MITSUBISHI
 					{
 						// TODO: default car here
+						ghost_default_cars = await ghost_default_car.DefaultGhostCarMitsubishi();
 					}
 					else if(body.selectManufacturer === 5) // NISSAN
 					{
-						// TODO: default car here
+						ghost_default_cars = await ghost_default_car.DefaultGhostCarNissan();
 					}
-					else if(body.selectManufacturer === 6) // ???
+					/*else if(body.selectManufacturer === 6) // ???
 					{
 						// TODO: default car here
-					}
+						ghost_default_cars = await ghost_default_car.DefaultGhostCar???();
+					}*/
 					else if(body.selectManufacturer === 7) // SUBARU
 					{
 						// TODO: default car here
-					}*/
+						ghost_default_cars = await ghost_default_car.DefaultGhostCarSubaru();
+					}
 					else if(body.selectManufacturer === 8) // TOYOTA
 					{
 						ghost_default_cars = await ghost_default_car.DefaultGhostCarToyota();
 					}
-					/*else if(body.selectManufacturer === 9) // ???
+					else if(body.selectManufacturer === 9) // AUDI
 					{
 						// TODO: default car here
+						ghost_default_cars = await ghost_default_car.DefaultGhostCarAudi();
 					}
-					else if(body.selectManufacturer === 10) // ???
+					else if(body.selectManufacturer === 10) // DODGE
 					{
 						// TODO: default car here
-					}*/
+						ghost_default_cars = await ghost_default_car.DefaultGhostCarDodge();
+					}
 					else if(body.selectManufacturer === 11) // LAMBORGHINI
 					{
 						ghost_default_cars = await ghost_default_car.DefaultGhostCarLamborghini();
@@ -640,11 +646,15 @@ export default class GhostModule extends Module {
 					{
 						ghost_default_cars = await ghost_default_car.DefaultGhostCarHonda();
 					}
-					else if(body.selectManufacturer === 14) // Porsche
+					else if(body.selectManufacturer === 13) // ACURA
+					{
+						ghost_default_cars = await ghost_default_car.DefaultGhostCarAcura();
+					}
+					else if(body.selectManufacturer === 14) // PORSCHE
 					{
 						ghost_default_cars = await ghost_default_car.DefaultGhostCarPorsche();
 					}
-					else
+					else // OTHER MAYBE?
 					{
 						ghost_default_cars = await ghost_default_car.DefaultGhostCarHonda();
 					}

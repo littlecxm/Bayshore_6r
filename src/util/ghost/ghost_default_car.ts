@@ -133,6 +133,166 @@ export async function DefaultGhostCarMazda()
 }
 
 
+export async function DefaultGhostCarMercedes()
+{
+    let cars = wm.wm.protobuf.Car.create({ 
+        carId: 999999999, // Don't change this
+        name: 'ＳＬＳ',
+        regionId: 18, // IDN (福井)
+        manufacturer: 3,
+        model: 87, // SLS AMG
+        visualModel: 107, // SLS AMG
+        defaultColor: 0,
+        customColor: 0,
+        wheel: 20,
+        wheelColor: 0,
+        aero: 0,
+        bonnet: 0,
+        wing: 0,
+        mirror: 0,
+        neon: 0,
+        trunk: 0,
+        plate: 0,
+        plateColor: 0,
+        plateNumber: 0,
+        tunePower: 18,
+        tuneHandling: 16,
+        rivalMarker: 32,
+        aura: 551,
+        windowSticker: true,
+        windowStickerString: 'ＢＡＹＳＨＯＲＥ',
+        windowStickerFont: 0,
+        title: 'No Ghost for this Manufacturer',
+        level: 65, // SSSSS
+        lastPlayedAt: date,
+        country: 'JPN',
+        lastPlayedPlace: playedPlace
+    });
+
+    return { cars };
+}
+
+
+export async function DefaultGhostCarMitsubishi()
+{
+    let cars = wm.wm.protobuf.Car.create({ 
+        carId: 999999999, // Don't change this
+        name: 'ＥＶＯ　９',
+        regionId: 18, // IDN (福井)
+        manufacturer: 4,
+        model: 22, // EVO IX
+        visualModel: 15, // EVO IX
+        defaultColor: 0,
+        customColor: 0,
+        wheel: 20,
+        wheelColor: 0,
+        aero: 0,
+        bonnet: 0,
+        wing: 0,
+        mirror: 0,
+        neon: 0,
+        trunk: 0,
+        plate: 0,
+        plateColor: 0,
+        plateNumber: 0,
+        tunePower: 18,
+        tuneHandling: 16,
+        rivalMarker: 32,
+        aura: 551,
+        windowSticker: true,
+        windowStickerString: 'ＢＡＹＳＨＯＲＥ',
+        windowStickerFont: 0,
+        title: 'No Ghost for this Manufacturer',
+        level: 65, // SSSSS
+        lastPlayedAt: date,
+        country: 'JPN',
+        lastPlayedPlace: playedPlace
+    });
+
+    return { cars };
+}
+
+
+export async function DefaultGhostCarNissan()
+{
+    let cars = wm.wm.protobuf.Car.create({ 
+        carId: 999999999, // Don't change this
+        name: 'ＤＥＢＵＧ',
+        regionId: 18, // IDN (福井)
+        manufacturer: 5,
+        model: 27, // R34 nur
+        visualModel: 30, // R34 nur
+        defaultColor: 0,
+        customColor: 0,
+        wheel: 20,
+        wheelColor: 0,
+        aero: 0,
+        bonnet: 0,
+        wing: 0,
+        mirror: 0,
+        neon: 0,
+        trunk: 0,
+        plate: 0,
+        plateColor: 0,
+        plateNumber: 0,
+        tunePower: 18,
+        tuneHandling: 16,
+        rivalMarker: 32,
+        aura: 551,
+        windowSticker: true,
+        windowStickerString: 'ＢＡＹＳＨＯＲＥ',
+        windowStickerFont: 0,
+        title: 'No Ghost for this Manufacturer',
+        level: 65, // SSSSS
+        lastPlayedAt: date,
+        country: 'JPN',
+        lastPlayedPlace: playedPlace
+    });
+
+    return { cars };
+}
+
+
+export async function DefaultGhostCarSubaru()
+{
+    let cars = wm.wm.protobuf.Car.create({ 
+        carId: 999999999, // Don't change this
+        name: 'ＳＶＸ',
+        regionId: 18, // IDN (福井)
+        manufacturer: 7,
+        model: 47, // ALCYONE SVX
+        visualModel: 54, // ALCYONE SVX
+        defaultColor: 0,
+        customColor: 0,
+        wheel: 20,
+        wheelColor: 0,
+        aero: 0,
+        bonnet: 0,
+        wing: 0,
+        mirror: 0,
+        neon: 0,
+        trunk: 0,
+        plate: 0,
+        plateColor: 0,
+        plateNumber: 0,
+        tunePower: 18,
+        tuneHandling: 16,
+        rivalMarker: 32,
+        aura: 551,
+        windowSticker: true,
+        windowStickerString: 'ＢＡＹＳＨＯＲＥ',
+        windowStickerFont: 0,
+        title: 'No Ghost for this Manufacturer',
+        level: 65, // SSSSS
+        lastPlayedAt: date,
+        country: 'JPN',
+        lastPlayedPlace: playedPlace
+    });
+
+    return { cars };
+}
+
+
 export async function DefaultGhostCarToyota()
 {
     let cars = wm.wm.protobuf.Car.create({ 
@@ -142,6 +302,86 @@ export async function DefaultGhostCarToyota()
         manufacturer: 8,
         model: 122, // GR Supra (not honda supra motorbike)
         visualModel: 145, // GR Supra (not honda supra motorbike)
+        defaultColor: 0,
+        customColor: 0,
+        wheel: 20,
+        wheelColor: 0,
+        aero: 0,
+        bonnet: 0,
+        wing: 0,
+        mirror: 0,
+        neon: 0,
+        trunk: 0,
+        plate: 0,
+        plateColor: 0,
+        plateNumber: 0,
+        tunePower: 18,
+        tuneHandling: 16,
+        rivalMarker: 32,
+        aura: 551,
+        windowSticker: true,
+        windowStickerString: 'ＢＡＹＳＨＯＲＥ',
+        windowStickerFont: 0,
+        title: 'No Ghost for this Manufacturer',
+        level: 65, // SSSSS
+        lastPlayedAt: date,
+        country: 'JPN',
+        lastPlayedPlace: playedPlace
+    });
+
+    return { cars };
+}
+
+
+export async function DefaultGhostCarAudi()
+{
+    let cars = wm.wm.protobuf.Car.create({ 
+        carId: 999999999, // Don't change this
+        name: 'Ｒ８',
+        regionId: 18, // IDN (福井)
+        manufacturer: 9,
+        model: 89, // R8
+        visualModel: 109, // R8
+        defaultColor: 0,
+        customColor: 0,
+        wheel: 20,
+        wheelColor: 0,
+        aero: 0,
+        bonnet: 0,
+        wing: 0,
+        mirror: 0,
+        neon: 0,
+        trunk: 0,
+        plate: 0,
+        plateColor: 0,
+        plateNumber: 0,
+        tunePower: 18,
+        tuneHandling: 16,
+        rivalMarker: 32,
+        aura: 551,
+        windowSticker: true,
+        windowStickerString: 'ＢＡＹＳＨＯＲＥ',
+        windowStickerFont: 0,
+        title: 'No Ghost for this Manufacturer',
+        level: 65, // SSSSS
+        lastPlayedAt: date,
+        country: 'JPN',
+        lastPlayedPlace: playedPlace
+    });
+
+    return { cars };
+}
+
+
+export async function DefaultGhostCarDodge()
+{
+    let cars = wm.wm.protobuf.Car.create({ 
+        carId: 999999999, // Don't change this
+        name: 'ＶＩＰＥＲ',
+        regionId: 18, // IDN (福井)
+        manufacturer: 10,
+        model: 91, // Viper SRT10
+        visualModel: 111, // Viper SRT10
         defaultColor: 0,
         customColor: 0,
         wheel: 20,
@@ -212,6 +452,7 @@ export async function DefaultGhostCarLamborghini()
     return { cars };
 }
 
+
 export async function DefaultGhostCarHonda()
 {
     let cars = wm.wm.protobuf.Car.create({ 
@@ -251,11 +492,52 @@ export async function DefaultGhostCarHonda()
     return { cars };
 }
 
+
+export async function DefaultGhostCarAcura()
+{
+    let cars = wm.wm.protobuf.Car.create({ 
+        carId: 999999999, // Don't change this
+        name: 'ＡＣＵＲＡ',
+        regionId: 18, // IDN (福井)
+        manufacturer: 12, // Not Acura... Acura is ID 13
+        model: 107, // Honda NSX
+        visualModel: 128, // Honda NSX
+        defaultColor: 0,
+        customColor: 0,
+        wheel: 20,
+        wheelColor: 0,
+        aero: 0,
+        bonnet: 0,
+        wing: 0,
+        mirror: 0,
+        neon: 0,
+        trunk: 0,
+        plate: 0,
+        plateColor: 0,
+        plateNumber: 0,
+        tunePower: 18,
+        tuneHandling: 16,
+        rivalMarker: 32,
+        aura: 551,
+        windowSticker: true,
+        windowStickerString: 'ＢＡＹＳＨＯＲＥ',
+        windowStickerFont: 0,
+        title: 'No Ghost for this Manufacturer',
+        level: 65, // SSSSS
+        lastPlayedAt: date,
+        country: 'JPN',
+        lastPlayedPlace: playedPlace
+    });
+
+    return { cars };
+}
+
+
 export async function DefaultGhostCarPorsche()
 {
     let cars = wm.wm.protobuf.Car.create({ 
         carId: 999999999, // Don't change this
-        name: 'Ｓ６６０',
+        name: '７１８',
         regionId: 18, // IDN (福井)
         manufacturer: 14,
         model: 121, // 718 CAYMAN S

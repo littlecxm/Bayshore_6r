@@ -14,6 +14,7 @@ import * as common from "../util/common";
 import * as ghost_save_trail from "../util/ghost/ghost_save_trail";
 import * as ghost_trail from "../util/ghost/ghost_trail";
 import * as ghost_area from "../util/ghost/ghost_area";
+import * as ghost_default_car from "../util/ghost/ghost_default_car";
 
 
 export default class GhostModule extends Module {
@@ -462,46 +463,14 @@ export default class GhostModule extends Module {
 					}
 
 					// Generate default S660 car data
-					car = wm.wm.protobuf.Car.create({ 
-						carId: 999999999, // Don't change this
-						name: 'Ｓ６６０',
-						regionId: body.regionId, // IDN (福井)
-						manufacturer: 12, // HONDA
-						model: 105, // S660 [JW5]
-						visualModel: 130, // S660 [JW5]
-						defaultColor: 0,
-						customColor: 0,
-						wheel: 20,
-						wheelColor: 0,
-						aero: 0,
-						bonnet: 0,
-						wing: 0,
-						mirror: 0,
-						neon: 0,
-						trunk: 0,
-						plate: 0,
-						plateColor: 0,
-						plateNumber: 0,
-						tunePower: tunePowerDefault,
-						tuneHandling: tuneHandlingDefault,
-						rivalMarker: 32,
-						aura: 551,
-						windowSticker: true,
-						windowStickerString: 'ＢＡＹＳＨＯＲＥ',
-						windowStickerFont: 0,
-						title: 'No Ghost for this Region',
-						level: 65, // SSSSS
-						lastPlayedAt: date,
-						country: 'JPN',
-						lastPlayedPlace: playedPlace
-					});
+					let ghost_default_cars = await ghost_default_car.DefaultGhostCarHonda();
 
 					// Push data to Ghost car proto
 					lists_ghostcar.push(wm.wm.protobuf.GhostCar.create({
-						car: car,
+						car: ghost_default_cars.cars,
 						nonhuman: true,
 						type: wm.wm.protobuf.GhostType.GHOST_DEFAULT,
-					}));
+					}))
 				}
 
 				// else{} have car list
@@ -530,14 +499,70 @@ export default class GhostModule extends Module {
             let body = wm.wm.protobuf.SearchCarsRequest.decode(req.body);
 			console.log(body);
 
-			// Find ghost car by selected level
-			let car = await prisma.car.findMany({
-				include:{
-					gtWing: true,
-					lastPlayedPlace: true
-				}
-			});
+			// Find ghost car
+			let car;
+			switch(body.selectionMethod)
+			{
+				case wm.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_MANUFACTURER:
+				{
+					let selectManufacturer = body.selectManufacturer;
 
+					car = await prisma.car.findMany({
+						where:{
+							manufacturer: selectManufacturer
+						},
+						include:{
+							gtWing: true,
+							lastPlayedPlace: true
+						}
+					});
+
+					break;
+				}
+				case wm.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_OTHER_MANUFACTURER:
+				{
+					let selectManufacturer = body.selectManufacturer;
+
+					car = await prisma.car.findMany({
+						where:{
+							manufacturer: selectManufacturer
+						},
+						include:{
+							gtWing: true,
+							lastPlayedPlace: true
+						}
+					});
+
+					break;
+				}
+				case wm.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_REGION_MANUFACTURER:
+				{
+					let selectManufacturer = body.selectManufacturer;
+
+					car = await prisma.car.findMany({
+						where:{
+							manufacturer: selectManufacturer
+						},
+						include:{
+							gtWing: true,
+							lastPlayedPlace: true
+						}
+					});
+
+					break;
+				}
+				default:
+				{
+					car = await prisma.car.findMany({
+						include:{
+							gtWing: true,
+							lastPlayedPlace: true
+						}
+					});
+
+					break;
+				}
+			}
 			// Randomizing the starting ramp and path based on selected area
 			let rampVal = 0;
 			let pathVal = 0;
@@ -554,75 +579,159 @@ export default class GhostModule extends Module {
 			let arr = [];
 			let maxNumber = 0;
 
-            // If all user car data available is more than 10 for certain level
-			if(car.length > 10)
-			{ 
-				maxNumber = 10 // Limit to 10 (game default)
+			if(car.length === 0)
+			{
+				if(body.selectionMethod === wm.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_MANUFACTURER ||
+				   body.selectionMethod === wm.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_OTHER_MANUFACTURER || 
+				   body.selectionMethod === wm.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_REGION_MANUFACTURER)
+				{
+					// Default car here
+					let ghost_default_cars: any;
+
+					if(body.selectManufacturer === 0) // BMW (Blood, Memory, Wonichan Moe)
+					{
+						ghost_default_cars = await ghost_default_car.DefaultGhostCarBMW();
+					}
+					else if(body.selectManufacturer === 1) // Chevrolet
+					{
+						ghost_default_cars = await ghost_default_car.DefaultGhostCarChevrolet();
+					}
+					else if(body.selectManufacturer === 2) // MAZDA
+					{
+						ghost_default_cars = await ghost_default_car.DefaultGhostCarMazda();
+					}
+					/*else if(body.selectManufacturer === 3) // ???
+					{
+						// TODO: default car here
+					}
+					else if(body.selectManufacturer === 4) // MITSUBISHI
+					{
+						// TODO: default car here
+					}
+					else if(body.selectManufacturer === 5) // NISSAN
+					{
+						// TODO: default car here
+					}
+					else if(body.selectManufacturer === 6) // ???
+					{
+						// TODO: default car here
+					}
+					else if(body.selectManufacturer === 7) // SUBARU
+					{
+						// TODO: default car here
+					}*/
+					else if(body.selectManufacturer === 8) // TOYOTA
+					{
+						ghost_default_cars = await ghost_default_car.DefaultGhostCarToyota();
+					}
+					/*else if(body.selectManufacturer === 9) // ???
+					{
+						// TODO: default car here
+					}
+					else if(body.selectManufacturer === 10) // ???
+					{
+						// TODO: default car here
+					}*/
+					else if(body.selectManufacturer === 11) // LAMBORGHINI
+					{
+						ghost_default_cars = await ghost_default_car.DefaultGhostCarLamborghini();
+					}
+					else if(body.selectManufacturer === 12) // HONDA
+					{
+						ghost_default_cars = await ghost_default_car.DefaultGhostCarHonda();
+					}
+					else if(body.selectManufacturer === 14) // Porsche
+					{
+						ghost_default_cars = await ghost_default_car.DefaultGhostCarPorsche();
+					}
+					else
+					{
+						ghost_default_cars = await ghost_default_car.DefaultGhostCarHonda();
+					}
+
+					lists_ghostcar.push(wm.wm.protobuf.GhostCar.create({
+						car: ghost_default_cars.cars,
+						area: body.area,
+						ramp: rampVal,
+						path: pathVal,
+						nonhuman: true,
+					}))
+				}
 			}
-            // If no more than 10
-			else{
-				maxNumber = car.length;
-			}
+			else
+			{
+				// If all user car data available is more than 10 for certain level
+				if(car.length > 10)
+				{ 
+					maxNumber = 10 // Limit to 10 (game default)
+				}
+				// If no more than 10
+				else
+				{
+					maxNumber = car.length;
+				}
 
-            // Choose the user's car data randomly to appear
-			while(arr.length < maxNumber){ 
+				// Choose the user's car data randomly to appear
+				while(arr.length < maxNumber)
+				{
+					// Pick random car Id
+					let randomNumber: number = Math.floor(Math.random() * car.length);
+					if(arr.indexOf(randomNumber) === -1)
+					{
+						// Push current number to array
+						arr.push(randomNumber); 
 
-                // Pick random car Id
-				let randomNumber: number = Math.floor(Math.random() * car.length);
-				if(arr.indexOf(randomNumber) === -1){
+						// Check if ghost trail for certain car is available
+						let ghost_trails = await prisma.ghostTrail.findFirst({
+							where: {
+								carId: car[randomNumber].carId,
+								area: body.area,
+								crownBattle: false
+							},
+							orderBy: {
+								playedAt: 'desc'
+							}
+						});
 
-                    // Push current number to array
-					arr.push(randomNumber); 
-
-                    // Check if ghost trail for certain car is available
-					let ghost_trails = await prisma.ghostTrail.findFirst({
-						where: {
-							carId: car[randomNumber].carId,
-							area: body.area,
-							crownBattle: false
-						},
-						orderBy: {
-							playedAt: 'desc'
+						// If regionId is 0 or not set, game will crash after defeating the ghost
+						if(car[randomNumber]!.regionId === 0)
+						{ 
+							let randomRegionId = Math.floor(Math.random() * 47) + 1;
+							car[randomNumber].regionId = randomRegionId;
 						}
-					});
 
-                    // If regionId is 0 or not set, game will crash after defeating the ghost
-					if(car[randomNumber]!.regionId === 0)
-					{ 
-						let randomRegionId = Math.floor(Math.random() * 47) + 1;
-						car[randomNumber].regionId = randomRegionId;
-					}
+						// Push user's car data without ghost trail
+						if(!(ghost_trails))
+						{ 
+							lists_ghostcar.push(wm.wm.protobuf.GhostCar.create({
+								car: car[randomNumber],
+								area: body.area,
+								ramp: rampVal,
+								path: pathVal,
+								nonhuman: true,
+								type: wm.wm.protobuf.GhostType.GHOST_DEFAULT,					
+							}));
+						}
+						// Push user's car data with ghost trail
+						else
+						{
+							// Set the tunePower used when playing certain area
+							car[randomNumber].tunePower = ghost_trails!.tunePower;
 
-                    // Push user's car data without ghost trail
-					if(!(ghost_trails)){ 
-						lists_ghostcar.push(wm.wm.protobuf.GhostCar.create({
-							car: car[randomNumber],
-							area: body.area,
-							ramp: rampVal,
-							path: pathVal,
-							nonhuman: true,
-							type: wm.wm.protobuf.GhostType.GHOST_DEFAULT,					
-						}));
-					}
-                    // Push user's car data with ghost trail
-					else{
+							// Set the tuneHandling used when playing certain area
+							car[randomNumber].tuneHandling = ghost_trails!.tuneHandling;
 
-                        // Set the tunePower used when playing certain area
-						car[randomNumber].tunePower = ghost_trails!.tunePower;
-
-                        // Set the tuneHandling used when playing certain area
-						car[randomNumber].tuneHandling = ghost_trails!.tuneHandling;
-
-                        // Push data to Ghost car proto
-						lists_ghostcar.push(wm.wm.protobuf.GhostCar.create({
-							car: car[randomNumber],
-							area: body.area,
-							ramp: rampVal,
-							path: pathVal,
-							nonhuman: false,
-							type: wm.wm.protobuf.GhostType.GHOST_NORMAL,
-							trailId: ghost_trails!.dbId!
-						}));
+							// Push data to Ghost car proto
+							lists_ghostcar.push(wm.wm.protobuf.GhostCar.create({
+								car: car[randomNumber],
+								area: body.area,
+								ramp: rampVal,
+								path: pathVal,
+								nonhuman: false,
+								type: wm.wm.protobuf.GhostType.GHOST_NORMAL,
+								trailId: ghost_trails!.dbId!
+							}));
+						}
 					}
 				}
 			}

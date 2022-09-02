@@ -758,13 +758,6 @@ export default class CarModule extends Module {
 					})
 				}
 			}
-
-			await prisma.carGTWing.update({
-				where: {
-					dbId: body.carId
-				}, 
-				data: dataGTWing
-			})
 			
 			// Response data
             let msg = {

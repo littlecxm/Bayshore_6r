@@ -206,14 +206,22 @@ export default class StartupModule extends Module {
         app.post('/method/update_event_mode_serial', async (req, res) => {
 
             let body = wm.wm.protobuf.UpdateEventModeSerialRequest.decode(req.body);
+            console.log(body);
 
             // TODO: Actual stuff here
             // This is literally just bare-bones so the shit boots
 
+            // Get current date
+            let date = Math.floor(new Date().getTime() / 1000);
+
+
 			// Response data
 			let msg = {
 				error: wm.wm.protobuf.ErrorCode.ERR_SUCCESS,
-                serialError: wm.wm.protobuf.EventModeSerialErrorCode.SERIAL_NO_INPUT
+                serialError: wm.wm.protobuf.EventModeSerialErrorCode.SERIAL_SUCCESS,
+                eventModeSerial: '280813401138',
+                startAt: date - 50000,
+                endAt: date + 500000
 			}
 
 			// Encode the response

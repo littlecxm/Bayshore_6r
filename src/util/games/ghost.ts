@@ -86,6 +86,7 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
                 dressupPoint: common.sanitizeInput(ghostResult.dressupPoint),
                 stampSheet: stampSheet,
                 stampSheetCount: common.sanitizeInputNotZero(ghostResult.stampSheetCount),
+                rgTrophy: common.sanitizeInputNotZero(ghostResult.rgTrophy),
             }
 
             // Count total win based on region map score

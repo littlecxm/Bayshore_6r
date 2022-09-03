@@ -33,6 +33,7 @@ export default class GhostModule extends Module {
                 }
             })
 
+            // Totaling local store score
             let sumLocalScore = 0;
             for(let i=0; i<localScores.length; i++)
             {
@@ -170,6 +171,7 @@ export default class GhostModule extends Module {
                     }));
                 }*/
                 
+                // Push the path per area (if not set.. all will become kandabashi ramp)
                 areaExpedition.push(wm.wm.protobuf.LoadGhostExpeditionTargetByPathResponse.AreaStats.create({
                     area: areaVal,
                     path: pathVal,
@@ -195,11 +197,10 @@ export default class GhostModule extends Module {
             // Get the request body for the load stamp target request
             let body = wm.wm.protobuf.LoadGhostExpeditionTargetsRequest.decode(req.body);
 
-            let area = 0;
-            let ramp = 0;
-            let path = 0;
-            
             // Get the area id and ramp id
+            let area = 0;
+            let ramp = 0; // this is important to set, if not.. the path shown when selecting car tune will get randomized
+            let path = 0;
             if(body.path)
             {
                 if(body.path >= 0 && body.path <= 9){ // GID_PATH_C1
@@ -278,8 +279,8 @@ export default class GhostModule extends Module {
                 take: 10
             })
 
-            let arrayWantedCarId = [];
-            
+            // Make array for excluding wanted car from non wanted car
+            let arrayWantedCarId = []; 
             for(let i=0; i<wantedCarList.length; i++)
             {
                 arrayWantedCarId.push(wantedCarList[i].carId);
@@ -289,7 +290,7 @@ export default class GhostModule extends Module {
             let car = await prisma.car.findMany({
                 where:{
                     NOT: {
-                        carId: { in: arrayWantedCarId },
+                        carId: { in: arrayWantedCarId }, // except wanted car
                     }
                 },
                 include:{
@@ -322,7 +323,7 @@ export default class GhostModule extends Module {
                     // Push current number to array
 					arr.push(randomNumber); 
 
-                    car[randomNumber].regionId = 20; // JPN
+                    car[randomNumber].regionId = 20; // JPN (country is become intl country by default from the game)
 
                     // Push data to Ghost car proto
                     lists_candidates.push(wm.wm.protobuf.GhostCar.create({
@@ -347,6 +348,7 @@ export default class GhostModule extends Module {
 
             for(let i=0; i<localScores.length; i++)
             {
+                // total the local store score
                 sumLocalScore += localScores[i].score;
 
                 if(localScores[i].carId !== body.carId)
@@ -357,6 +359,7 @@ export default class GhostModule extends Module {
                         }
                     })
 
+                    // Push to recent store winner 
                     recentWinners.push(wm.wm.protobuf.CarEntry.create({
                         name: car!.name,
                         level: car!.level,
@@ -399,6 +402,7 @@ export default class GhostModule extends Module {
                         }
                     })
 
+                    // idk what hostages for
                     let hostages = wm.wm.protobuf.CarEntry.create({
                         name: car!.name,
                         level: car!.level,
@@ -412,7 +416,7 @@ export default class GhostModule extends Module {
                     lists_wanted.push(wm.wm.protobuf.WantedCar.create({
                         ghost: ghostcar,
                         wantedId: wantedCar.carId, // id?
-                        bonus: wantedCarList[i].bonus, // for bonus win store
+                        bonus: wantedCarList[i].bonus, // for bonus store win
                         numOfHostages: 1, // idk what this is for
                         defeatedMeCount: wantedCarList[i].defeatedMeCount, // for bonus movements
                         hostage: hostages // idk what this is for

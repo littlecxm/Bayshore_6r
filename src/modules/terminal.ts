@@ -905,6 +905,7 @@ export default class TerminalModule extends Module {
             common.sendResponse(message, res);
 		})
 
+		
 		// Recieve user items
 		app.post('/method/register_opponent_ghost', async (req, res) => {
 		

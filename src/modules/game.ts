@@ -428,7 +428,8 @@ export default class GameModule extends Module {
 				});
 
 				// If opponent is default ghost or random ghost
-				if(!(ghostOpponentCar)){ 
+				if(!(ghostOpponentCar))
+				{ 
 					ghostOpponentCar = await prisma.car.findFirst({});
 					ghostOpponentCar!.name = 'Ｓ６６０';
 					ghostOpponentCar!.manufacturer = 12;
@@ -471,7 +472,8 @@ export default class GameModule extends Module {
 					});
 
 					// If opponent is default ghost or random ghost
-					if(!(ghostOpponentCar2)){
+					if(!(ghostOpponentCar2))
+					{
 						ghostOpponentCar2 = await prisma.car.findFirst({});
 						ghostOpponentCar2!.name = 'Ｓ６６０';
 						ghostOpponentCar2!.manufacturer = 12;
@@ -511,7 +513,8 @@ export default class GameModule extends Module {
 					});
 
 					// If opponent is default ghost or random ghost
-					if(!(ghostOpponentCar3)){ 
+					if(!(ghostOpponentCar3))
+					{ 
 						ghostOpponentCar3 = await prisma.car.findFirst({});
 						ghostOpponentCar3!.name = 'Ｓ６６０';
 						ghostOpponentCar3!.manufacturer = 12;

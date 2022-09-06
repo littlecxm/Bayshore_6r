@@ -37,10 +37,12 @@ export default class CarModule extends Module {
 			});
 
 			// Error handling if ghostLevel accidentally set to 0 or more than 10
-			if(car!.ghostLevel < 1){
+			if(car!.ghostLevel < 1)
+			{
 				car!.ghostLevel = 1;
 			}
-			if(car!.ghostLevel > 11){
+			if(car!.ghostLevel > 11)
+			{
 				car!.ghostLevel = 10;
 			}
 
@@ -461,8 +463,14 @@ export default class CarModule extends Module {
 				}
 			}
 
+			// Randomize regionId
+			let randomRegionId: number = 18;
+			for(let i=0; i<5; i++)
+			{
+				randomRegionId = Math.floor(Math.random() * 47) + 1;
+			}
+			
 			// Default car values
-			let randomRegionId = Math.floor(Math.random() * 47) + 1;
 			let carInsert = {
 				userId: user.id,
 				manufacturer: body.car.manufacturer!,

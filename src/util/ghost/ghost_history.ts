@@ -1,6 +1,7 @@
-// Import Proto
 import { prisma } from "../..";
 import { Config } from "../../config";
+
+// Import Proto
 import { wm } from "../../wmmt/wm.proto";
 
 // Import Util
@@ -112,6 +113,7 @@ export async function saveGhostHistory(body: wm.protobuf.SaveGameResultRequest)
 }
 
 
+// Save OCM ghost history battle
 export async function saveOCMGhostHistory(body: wm.protobuf.SaveGameResultRequest)
 {
     let updateNewTrail: boolean = true;
@@ -210,6 +212,7 @@ export async function saveOCMGhostHistory(body: wm.protobuf.SaveGameResultReques
         if(countGBR!.result < saveExGhostHistory.result)
         {
             console.log('OCM Ghost Tally found');
+
             // Current date is OCM Main Draw
             if(ocmEventDate!.competitionStartAt < date && ocmEventDate!.competitionCloseAt > date)
             {
@@ -360,6 +363,7 @@ export async function saveOCMGhostHistory(body: wm.protobuf.SaveGameResultReques
             if(ocmTallyfind)
             {
                 console.log('Updating OCM Tally Record');
+                
                 // Update the OCM Tally Record
                 await prisma.oCMTally.update({
                     where:{
@@ -392,6 +396,8 @@ export async function saveOCMGhostHistory(body: wm.protobuf.SaveGameResultReques
     return { updateNewTrail }
 }
 
+
+// Save VSORG ghost history battle
 export async function saveVSORGGhostHistory(body: wm.protobuf.SaveGameResultRequest)
 {
     console.log('Saving VSORG Ghost Battle History');
@@ -633,4 +639,185 @@ export async function saveVSORGGhostHistory(body: wm.protobuf.SaveGameResultRequ
 
     // Return the value to 'BASE_PATH/src/util/games/ghost.ts'
     return { updateNewTrail }
+}
+
+
+// Save VSORG ghost history battle but retiring
+export async function saveVSORGGhostRetireHistory(body: wm.protobuf.SaveGameResultRequest)
+{
+    // Get the ghost result for the car
+    let ghostResult = body?.rgResult;
+
+    // Get current date
+    let date = Math.floor(new Date().getTime() / 1000);
+
+    // ghostResult is set
+    let dataGhost: any;
+    if (ghostResult)
+    {
+        dataGhost = {
+            rgPlayCount: common.sanitizeInput(ghostResult.rgPlayCount), 
+        }
+
+        // Update the car properties
+        await prisma.car.update({
+            where: {
+                carId: body.carId
+            },
+            data: {
+                ...dataGhost
+            }
+        });
+
+        // Making wanted car
+        let dataWantedGhost = {
+            carId: common.sanitizeInput(ghostResult.opponents![0].carId),
+            bonus: 0,
+            numOfHostages: 1,
+            defeatedMeCount: 1,
+        }
+
+        let checkWantedCar = await prisma.ghostExpeditionWantedCar.findFirst({
+            where:{
+                carId: dataWantedGhost.carId
+            }
+        })
+
+        if(checkWantedCar)
+        {
+            console.log('Updating Wanted Car');
+
+            dataWantedGhost.bonus = checkWantedCar.bonus + 1;
+            dataWantedGhost.defeatedMeCount = checkWantedCar.defeatedMeCount + 1;
+
+            await prisma.ghostExpeditionWantedCar.update({
+                where:{
+                    dbId: checkWantedCar.dbId
+                },
+                data: dataWantedGhost
+            })
+        }
+        else
+        {
+            console.log('Creating Wanted Car');
+
+            await prisma.ghostExpeditionWantedCar.create({
+                data: dataWantedGhost
+            })
+        }
+        
+    }
+
+    // Get the ghost expedition result for the car
+    let expeditionResult = body.rgResult?.expeditionResult;
+
+    // expeditionResult is set
+    if (expeditionResult)
+    {
+        // Expedition update data
+        let dataExpedition = {
+            ghostExpeditionId: common.sanitizeInput(expeditionResult.ghostExpeditionId),
+            sugorokuPoint: common.sanitizeInput(expeditionResult.sugorokuPoint),
+            earnedScore: common.sanitizeInput(expeditionResult.earnedScore),
+            score: common.sanitizeInput(expeditionResult.score),
+        }
+        
+        let checkExpeditionData = await prisma.ghostExpedition.findFirst({
+            where:{
+                carId: body.carId
+            }
+        }); 
+
+        // Update the expedition data
+        if(checkExpeditionData)
+        {
+            await prisma.ghostExpedition.update({
+                where:{
+                    dbId: checkExpeditionData.dbId
+                },
+                data: {
+                    ...dataExpedition
+                }
+            }); 
+        }
+        // Create the expedition data
+        else
+        {
+            await prisma.ghostExpedition.create({
+                data: {
+                    carId: body.carId,
+                    ...dataExpedition
+                }
+            }); 
+        }
+        
+        if(expeditionResult.earnedItems!.length !== 0)
+        {
+            console.log('User Item reward from VSORG available, continuing ...');
+
+            for(let i=0; i<expeditionResult.earnedItems!.length; i++)
+            {
+                await prisma.userItem.create({
+                    data: {
+                        category: expeditionResult.earnedItems![i].category,
+                        itemId: expeditionResult.earnedItems![i].itemId,
+                        userId: body.car!.userId!,
+                        earnedAt: date,
+                        type: 0
+                    }
+                });
+            }
+        }
+
+        if(expeditionResult.aftereventBonus!.length !== 0)
+        {
+            console.log('User Item after event reward from VSORG available, continuing ...');
+
+            for(let i=0; i<expeditionResult.aftereventBonus!.length; i++)
+            {
+                /*
+                await prisma.userItem.create({
+                    data: {
+                        category: expeditionResult.earnedItems![i].category,
+                        itemId: expeditionResult.earnedItems![i].itemId,
+                        userId: body.car!.userId!,
+                        earnedAt: date,
+                        type: 0
+                    }
+                });*/
+            }
+        }
+    }
+
+    // Check full tune ticket piece
+    let checkFTTicketPiece = await prisma.userItem.findMany({
+        where:{
+            userId: body.car!.userId!,
+            category: 202,
+            itemId: 2
+        }
+    });
+
+    if(checkFTTicketPiece.length >= 6)
+    {
+        // Give full tune ticket :)
+        await prisma.userItem.create({
+            data:{
+                userId: body.car!.userId!,
+                category: 203,
+                itemId: 5,
+                type: 0,
+                earnedAt: date
+            }
+        });
+        
+        // Remove full tune ticket piece :(
+        await prisma.userItem.deleteMany({
+            where:{
+                userId: body.car!.userId!,
+                category: 202,
+                itemId: 2,
+            }
+        });
+    }
 }

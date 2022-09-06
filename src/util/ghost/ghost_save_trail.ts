@@ -254,6 +254,7 @@ export async function saveCrownGhostTrail(body: wm.protobuf.RegisterGhostTrailRe
     }
 }
 
+
 // Save Crown ghost battle result
 export async function saveNormalGhostTrail(body: wm.protobuf.RegisterGhostTrailRequest)
 {

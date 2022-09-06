@@ -281,6 +281,7 @@ export default class UserModule extends Module {
 				}
 				// else{} User don't have a car... returning default windowStickerString and windowStickerFont value
 
+				// Check if last played id is null
 				if(user.cars[0].lastPlayedPlaceId === null || user.cars[0].lastPlayedPlaceId === undefined)
 				{
 					for(let i=0; i<user.cars.length; i++)
@@ -299,10 +300,11 @@ export default class UserModule extends Module {
 				}
 			}
 
-			// Change Ghost Stamp tutorial to true
+			// Change Ghost Stamp tutorial to true (preventing soft lock from the game)
 			if(user.tutorials[20] === false)
 			{
-				console.log('Change Ghost Stamp tutorial to true')
+				console.log('Change Ghost Stamp tutorial to true');
+
 				for(let i=20; i<25; i++)
 				{
 					user.tutorials[i] = true
@@ -317,7 +319,6 @@ export default class UserModule extends Module {
 					}
 				})
 			}
-			
 
 			// Check ghost trophy count if more than 50 or not
 			let ghostExpeditionLocked: boolean = true;
@@ -360,6 +361,7 @@ export default class UserModule extends Module {
 				windowStickerString: wsString, 
 				windowStickerFont: wsFont,
 
+				// Wangan Navi Stuff?
 				spappState: wm.wm.protobuf.SmartphoneAppState.SPAPP_BNID,
 				transferState: wm.wm.protobuf.TransferState.TRANSFERRED,
 				wasCreatedToday: false,

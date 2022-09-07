@@ -8,7 +8,8 @@ import { wm } from "../../wmmt/wm.proto";
 export async function saveTimeAttackResult(body: wm.protobuf.SaveGameResultRequest)
 {
     // If the game was not retired / timed out
-    if (!(body.retired || body.timeup)) {
+    if (!(body.retired || body.timeup)) 
+    {
         console.log('Game not retired / timed out, continuing ...')
 
         // Get the current time attack record for the car

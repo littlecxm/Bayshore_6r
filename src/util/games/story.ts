@@ -15,6 +15,8 @@ export async function saveStoryResult(body: wm.protobuf.SaveGameResultRequest, c
     // If the game was not retired / timed out
     if (!(body.retired || body.timeup)) 
     {
+        console.log('Game not retired / timed out, continuing ...')
+        
         // Get the story result for the car
         let storyResult = body?.stResult;
         let stLoseBits = 0;

@@ -22,6 +22,7 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
     // If the game was not retired / timed out
     if (!(body.retired || body.timeup)) 
     {
+        console.log('Game not retired / timed out, continuing ...')
         console.log('Saving Ghost Battle Result');
         
         // Set ghost mode play to true for saving the ghost trail later
@@ -654,6 +655,21 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
                 }
             }
         }
+
+        // Ghost update data
+        let dataGhost = {
+            rgPlayCount: common.sanitizeInput(body.rgResult!.rgPlayCount), 
+        }
+
+        // Update the car properties
+        await prisma.car.update({
+            where: {
+                carId: body.carId
+            },
+            data: {
+                ...dataGhost
+            }
+        }); 
     }
     // Retiring VS ORG
     else if(body.rgResult!.selectionMethod === wmproto.wm.protobuf.GhostSelectionMethod.GHOST_EXPEDITION)

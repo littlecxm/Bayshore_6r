@@ -42,7 +42,7 @@ export async function DefaultGhostCarBMW()
         windowSticker: true,
         windowStickerString: 'ＢＡＹＳＨＯＲＥ',
         windowStickerFont: 0,
-        title: 'No Ghost for this Manufacturer',
+        title: 'Wangan Beginner',
         level: 65, // SSSSS
         lastPlayedAt: date,
         country: 'JPN',
@@ -82,7 +82,7 @@ export async function DefaultGhostCarChevrolet()
         windowSticker: true,
         windowStickerString: 'ＢＡＹＳＨＯＲＥ',
         windowStickerFont: 0,
-        title: 'No Ghost for this Manufacturer',
+        title: 'Wangan Beginner',
         level: 65, // SSSSS
         lastPlayedAt: date,
         country: 'JPN',
@@ -122,7 +122,7 @@ export async function DefaultGhostCarMazda()
         windowSticker: true,
         windowStickerString: 'ＢＡＹＳＨＯＲＥ',
         windowStickerFont: 0,
-        title: 'No Ghost for this Manufacturer',
+        title: 'Wangan Beginner',
         level: 65, // SSSSS
         lastPlayedAt: date,
         country: 'JPN',
@@ -162,7 +162,7 @@ export async function DefaultGhostCarMercedes()
         windowSticker: true,
         windowStickerString: 'ＢＡＹＳＨＯＲＥ',
         windowStickerFont: 0,
-        title: 'No Ghost for this Manufacturer',
+        title: 'Wangan Beginner',
         level: 65, // SSSSS
         lastPlayedAt: date,
         country: 'JPN',
@@ -202,7 +202,7 @@ export async function DefaultGhostCarMitsubishi()
         windowSticker: true,
         windowStickerString: 'ＢＡＹＳＨＯＲＥ',
         windowStickerFont: 0,
-        title: 'No Ghost for this Manufacturer',
+        title: 'Wangan Beginner',
         level: 65, // SSSSS
         lastPlayedAt: date,
         country: 'JPN',
@@ -242,7 +242,7 @@ export async function DefaultGhostCarNissan()
         windowSticker: true,
         windowStickerString: 'ＢＡＹＳＨＯＲＥ',
         windowStickerFont: 0,
-        title: 'No Ghost for this Manufacturer',
+        title: 'Wangan Beginner',
         level: 65, // SSSSS
         lastPlayedAt: date,
         country: 'JPN',
@@ -282,7 +282,7 @@ export async function DefaultGhostCarSubaru()
         windowSticker: true,
         windowStickerString: 'ＢＡＹＳＨＯＲＥ',
         windowStickerFont: 0,
-        title: 'No Ghost for this Manufacturer',
+        title: 'Wangan Beginner',
         level: 65, // SSSSS
         lastPlayedAt: date,
         country: 'JPN',
@@ -322,7 +322,7 @@ export async function DefaultGhostCarToyota()
         windowSticker: true,
         windowStickerString: 'ＢＡＹＳＨＯＲＥ',
         windowStickerFont: 0,
-        title: 'No Ghost for this Manufacturer',
+        title: 'Wangan Beginner',
         level: 65, // SSSSS
         lastPlayedAt: date,
         country: 'JPN',
@@ -362,7 +362,7 @@ export async function DefaultGhostCarAudi()
         windowSticker: true,
         windowStickerString: 'ＢＡＹＳＨＯＲＥ',
         windowStickerFont: 0,
-        title: 'No Ghost for this Manufacturer',
+        title: 'Wangan Beginner',
         level: 65, // SSSSS
         lastPlayedAt: date,
         country: 'JPN',
@@ -402,7 +402,7 @@ export async function DefaultGhostCarDodge()
         windowSticker: true,
         windowStickerString: 'ＢＡＹＳＨＯＲＥ',
         windowStickerFont: 0,
-        title: 'No Ghost for this Manufacturer',
+        title: 'Wangan Beginner',
         level: 65, // SSSSS
         lastPlayedAt: date,
         country: 'JPN',
@@ -442,7 +442,7 @@ export async function DefaultGhostCarLamborghini()
         windowSticker: true,
         windowStickerString: 'ＢＡＹＳＨＯＲＥ',
         windowStickerFont: 0,
-        title: 'No Ghost for this Manufacturer',
+        title: 'Wangan Beginner',
         level: 65, // SSSSS
         lastPlayedAt: date,
         country: 'JPN',
@@ -482,7 +482,7 @@ export async function DefaultGhostCarHonda()
         windowSticker: true,
         windowStickerString: 'ＢＡＹＳＨＯＲＥ',
         windowStickerFont: 0,
-        title: 'No Ghost for this Manufacturer',
+        title: 'Wangan Beginner',
         level: 65, // SSSSS
         lastPlayedAt: date,
         country: 'JPN',
@@ -522,7 +522,7 @@ export async function DefaultGhostCarAcura()
         windowSticker: true,
         windowStickerString: 'ＢＡＹＳＨＯＲＥ',
         windowStickerFont: 0,
-        title: 'No Ghost for this Manufacturer',
+        title: 'Wangan Beginner',
         level: 65, // SSSSS
         lastPlayedAt: date,
         country: 'JPN',
@@ -562,7 +562,7 @@ export async function DefaultGhostCarPorsche()
         windowSticker: true,
         windowStickerString: 'ＢＡＹＳＨＯＲＥ',
         windowStickerFont: 0,
-        title: 'No Ghost for this Manufacturer',
+        title: 'Wangan Beginner',
         level: 65, // SSSSS
         lastPlayedAt: date,
         country: 'JPN',

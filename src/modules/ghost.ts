@@ -503,6 +503,7 @@ export default class GhostModule extends Module {
 			let car;
 			switch(body.selectionMethod)
 			{
+				// GHOST_SELECT_BY_MANUFACTURER = 16
 				case wm.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_MANUFACTURER:
 				{
 					let selectManufacturer = body.selectManufacturer;
@@ -519,6 +520,7 @@ export default class GhostModule extends Module {
 
 					break;
 				}
+				// GHOST_SELECT_BY_OTHER_MANUFACTURER = 17
 				case wm.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_OTHER_MANUFACTURER:
 				{
 					let selectManufacturer = body.selectManufacturer;
@@ -535,6 +537,7 @@ export default class GhostModule extends Module {
 
 					break;
 				}
+				// GHOST_SELECT_BY_REGION_MANUFACTURER = 20
 				case wm.wm.protobuf.GhostSelectionMethod.GHOST_SELECT_BY_REGION_MANUFACTURER:
 				{
 					let selectManufacturer = body.selectManufacturer;
@@ -659,13 +662,21 @@ export default class GhostModule extends Module {
 						ghost_default_cars = await ghost_default_car.DefaultGhostCarHonda();
 					}
 
-					lists_ghostcar.push(wm.wm.protobuf.GhostCar.create({
-						car: ghost_default_cars.cars,
-						area: body.area,
-						ramp: rampVal,
-						path: pathVal,
-						nonhuman: true,
-					}))
+					for(let i=0; i<3; i++)
+					{
+
+						lists_ghostcar.push(wm.wm.protobuf.GhostCar.create({
+							car: {
+								...ghost_default_cars.cars,
+								carId: 999999999-i // prevent dupilcate id
+							},
+							area: body.area,
+							ramp: rampVal,
+							path: pathVal,
+							nonhuman: true,
+						}))
+					}
+					console.log(lists_ghostcar);
 				}
 			}
 			else

@@ -497,7 +497,6 @@ export default class GhostModule extends Module {
 
 			// Get the request body for the load ghost drive data request
             let body = wm.wm.protobuf.SearchCarsRequest.decode(req.body);
-			console.log(body);
 
 			// Find ghost car
 			let car;
@@ -676,7 +675,6 @@ export default class GhostModule extends Module {
 							nonhuman: true,
 						}))
 					}
-					console.log(lists_ghostcar);
 				}
 			}
 			else

@@ -7,11 +7,13 @@ export default class ApiModule extends Module {
     register(app: Application): void {
         app.use(express.urlencoded({
             type: '*/*',
-            extended: true
+            extended: true,
+            limit: '50mb' // idk.. i got PayloadTooLargeError: request entity too large (adding this solve the problem)
         }));
     
         app.use(express.json({
-            type: '*/*'
+            type: '*/*',
+            limit: '50mb' // idk.. i got PayloadTooLargeError: request entity too large (adding this solve the problem)
         }));
 
         // API Get Requests

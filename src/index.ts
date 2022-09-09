@@ -39,7 +39,8 @@ const allnetApp = express();
 const apiApp = express();
 
 app.use(bodyParser.raw({
-    type: '*/*'
+    type: '*/*',
+    limit: '50mb' // idk.. i got PayloadTooLargeError: request entity too large (adding this solve the problem)
 }));
 
 let useSentry = !!Config.getConfig().sentryDsn;

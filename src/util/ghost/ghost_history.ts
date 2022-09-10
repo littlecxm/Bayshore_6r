@@ -688,7 +688,8 @@ export async function saveVSORGGhostRetireHistory(body: wm.protobuf.SaveGameResu
 
         let checkWantedCar = await prisma.ghostExpeditionWantedCar.findFirst({
             where:{
-                carId: dataWantedGhost.carId
+                carId: dataWantedGhost.carId,
+                area: getArea.area
             }
         })
 

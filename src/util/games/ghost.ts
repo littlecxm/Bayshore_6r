@@ -676,7 +676,7 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
     {
         console.log('VSORG (Expedition) Ghost Mode Found but Retiring');
 
-        await ghost_history.saveVSORGGhostHistory(body);
+        await ghost_history.saveVSORGGhostRetireHistory(body);
     }
     // TODO: Highway Ghost Mode Retiring Saving
 

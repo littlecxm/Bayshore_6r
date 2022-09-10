@@ -23,7 +23,6 @@ export default class GameModule extends Module {
 
 			// Get the request body for the save game result request
 			let body = wm.wm.protobuf.SaveGameResultRequest.decode(req.body);
-			console.log(body);
 
 			// Get the user's car
 			let car = await prisma.car.findFirst({

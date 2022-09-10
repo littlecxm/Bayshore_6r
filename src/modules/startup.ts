@@ -103,13 +103,28 @@ export default class StartupModule extends Module {
             }
 
             // TODO: Move this to db
-            let vsorgEventDate = wm.wm.protobuf.GhostExpeditionSchedule.create({ 
-                ghostExpeditionId: 1,
-                startAt: date - 500000,
-                endAt: date + 500000,
-                aftereventEndAt: date + 1000000,
-                opponentCountry: "JPN" // not sure if this connected to ghostExpeditionId or not
-            });
+            let ghostExpeditionDate = await prisma.ghostExpeditionEvent.findFirst({
+                where: {
+					// qualifyingPeriodStartAt is less than equal current date
+					startAt: { lte: date },
+		
+					// competitionEndAt is greater than equal current date
+					aftereventEndAt: { gte: date },
+				},
+            })
+            let vsOrgEventDate;
+
+            if(ghostExpeditionDate)
+            {
+                vsOrgEventDate = wm.wm.protobuf.GhostExpeditionSchedule.create({ 
+                    ghostExpeditionId: ghostExpeditionDate.ghostExpeditionId,
+                    startAt: ghostExpeditionDate.startAt,
+                    endAt: ghostExpeditionDate.endAt,
+                    aftereventEndAt: ghostExpeditionDate.aftereventEndAt,
+                    opponentCountry: ghostExpeditionDate.opponentCountry // not sure if this connected to ghostExpeditionId or not
+                });
+            }
+            
             
             // Response data
             let msg = {
@@ -132,7 +147,7 @@ export default class StartupModule extends Module {
                 competitionSchedule: competitionSchedule || null, // OCM Event Available or not
 
                 // VSORG
-                expeditionSchedule: vsorgEventDate || null,
+                expeditionSchedule: vsOrgEventDate || null,
                 expeditionEventWasHeld: true
             }
 

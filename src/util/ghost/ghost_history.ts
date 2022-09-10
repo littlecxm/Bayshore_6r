@@ -542,10 +542,13 @@ export async function saveVSORGGhostHistory(body: wm.protobuf.SaveGameResultRequ
         data: saveExGhostHistory
     });
 
+    let getArea = await ghost_get_area_from_path.getArea(rgResult!.path);
+
     // Check if defeating Wanted car
     let checkWantedCar = await prisma.ghostExpeditionWantedCar.findFirst({
         where:{
-            carId: rgResult!.opponents![0].carId
+            carId: rgResult!.opponents![0].carId,
+            area: getArea.area
         }
     })
 
@@ -592,6 +595,7 @@ export async function saveVSORGGhostHistory(body: wm.protobuf.SaveGameResultRequ
                 bonus: 0,
                 numOfHostages: 1,
                 defeatedMeCount: 1,
+                area: getArea.area
             }
 
             console.log('Creating Wanted Car');
@@ -645,6 +649,8 @@ export async function saveVSORGGhostHistory(body: wm.protobuf.SaveGameResultRequ
 // Save VSORG ghost history battle but retiring
 export async function saveVSORGGhostRetireHistory(body: wm.protobuf.SaveGameResultRequest)
 {
+    console.log('Saving VSORG Retiring Ghost Battle History');
+
     // Get the ghost result for the car
     let ghostResult = body?.rgResult;
 
@@ -669,12 +675,15 @@ export async function saveVSORGGhostRetireHistory(body: wm.protobuf.SaveGameResu
             }
         });
 
+        let getArea = await ghost_get_area_from_path.getArea(ghostResult.path);
+
         // Making wanted car
         let dataWantedGhost = {
             carId: common.sanitizeInput(ghostResult.opponents![0].carId),
             bonus: 0,
             numOfHostages: 1,
             defeatedMeCount: 1,
+            area: getArea.area
         }
 
         let checkWantedCar = await prisma.ghostExpeditionWantedCar.findFirst({

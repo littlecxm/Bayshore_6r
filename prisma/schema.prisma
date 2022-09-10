@@ -475,3 +475,12 @@ model GhostExpeditionWantedCar {
   locked              Boolean   @default(false)
   challengerCarId     Int?
 }
+
+model GhostExpeditionEvent {
+  dbId                Int       @id @default(autoincrement())
+  ghostExpeditionId   Int
+  startAt             Int
+  endAt               Int
+  aftereventEndAt     Int
+  opponentCountry     String
+}

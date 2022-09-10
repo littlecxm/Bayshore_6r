@@ -416,6 +416,7 @@ export default class GhostModule extends Module {
 				{
 					// Get current date
 					let date = Math.floor(new Date().getTime() / 1000);
+					
 					let playedPlace = wm.wm.protobuf.Place.create({ 
 						placeId: Config.getConfig().placeId,
 						regionId: Config.getConfig().regionId,
@@ -486,7 +487,13 @@ export default class GhostModule extends Module {
 
 					// Push data to Ghost car proto
 					lists_ghostcar.push(wm.wm.protobuf.GhostCar.create({
-						car: ghost_default_cars.cars,
+						car: {
+							...ghost_default_cars.cars,
+							tunePower: tunePowerDefault,
+							tuneHandling: tuneHandlingDefault,
+							lastPlayedAt: date,
+							lastPlayedPlace: playedPlace
+						},
 						nonhuman: true,
 						type: wm.wm.protobuf.GhostType.GHOST_DEFAULT,
 					}))
@@ -680,13 +687,26 @@ export default class GhostModule extends Module {
 						ghost_default_cars = await ghost_default_car.DefaultGhostCarHonda();
 					}
 
+					// Get current date
+					let date = Math.floor(new Date().getTime() / 1000);
+
+					let playedPlace = wm.wm.protobuf.Place.create({ 
+						placeId: Config.getConfig().placeId,
+						regionId: Config.getConfig().regionId,
+						shopName: Config.getConfig().shopName,
+						country: Config.getConfig().country
+					});
+
 					for(let i=0; i<3; i++)
 					{
 
 						lists_ghostcar.push(wm.wm.protobuf.GhostCar.create({
 							car: {
 								...ghost_default_cars.cars,
-								carId: 999999999-i // prevent dupilcate id
+								carId: 999999999-i, // prevent dupilcate id
+								lastPlayedAt: date,
+								lastPlayedPlace: playedPlace
+
 							},
 							area: body.area,
 							ramp: rampVal,

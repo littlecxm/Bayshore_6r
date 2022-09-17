@@ -11,10 +11,12 @@ export default class ApiModule extends Module {
             limit: '50mb' // idk.. i got PayloadTooLargeError: request entity too large (adding this solve the problem)
         }));
     
+
         app.use(express.json({
             type: '*/*',
             limit: '50mb' // idk.. i got PayloadTooLargeError: request entity too large (adding this solve the problem)
         }));
+
 
         // API Get Requests
         // Get Current Competition Id
@@ -74,6 +76,7 @@ export default class ApiModule extends Module {
             }
         });
 
+        
         // Get Competition Ranking
         app.get('/api/get_competition_ranking', async (req, res) => {
 

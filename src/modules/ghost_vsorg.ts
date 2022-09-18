@@ -30,6 +30,9 @@ export default class GhostModule extends Module {
             let localScores = await prisma.ghostExpedition.findMany({
                 where:{
                     ghostExpeditionId: 1
+                },
+                orderBy:{
+                    score: 'desc'
                 }
             })
 
@@ -453,6 +456,81 @@ export default class GhostModule extends Module {
 
             // Encode the response
 			let message = wmsrv.wm.protobuf.LockWantedResponse.encode(msg);
+
+            // Send the response to the client
+            common.sendResponse(message, res);
+        })
+
+        
+        app.post('/method/load_ghost_expedition_result', async (req, res) => {
+
+            // Get the request body for the load stamp target request
+            let body = wmsrv.wm.protobuf.LoadGhostExpeditionResultRequest.decode(req.body);
+
+            // Get User data
+            let userScores = await prisma.ghostExpedition.findFirst({
+                where:{
+                    carId: body.carId,
+                    ghostExpeditionId: body.ghostExpeditionId
+                }
+            })
+
+            // Get local store score
+            let localScores = await prisma.ghostExpedition.findMany({
+                where:{
+                    ghostExpeditionId: body.ghostExpeditionId
+                },
+                orderBy:{
+                    score: 'desc'
+                }
+            })
+
+            // Totaling local store score
+            let sumLocalScore = 0;
+            let ghostExpeditionRankings: wm.wm.protobuf.GhostExpeditionRankingEntry[] = []
+
+            for(let i=0; i<localScores.length; i++)
+            {
+                sumLocalScore += localScores[i].score;
+            }
+
+            // Get car score
+            for(let i=0; i<localScores.length; i++)
+            {
+                let car = await prisma.car.findFirst({
+                    where:{
+                        carId: localScores[i].carId
+                    },
+                    orderBy:{
+                        carId: 'asc'
+                    },
+                    include:{
+                        gtWing: true,
+                        lastPlayedPlace: true
+                    }
+                });
+
+                
+                if(car)
+                {    
+                    ghostExpeditionRankings.push(wm.wm.protobuf.GhostExpeditionRankingEntry.create({
+                        rank: i+1,
+                        score: localScores[i].score,
+                        car: car!
+                    }));
+                }
+            } 
+
+            // Response data
+            let msg = {
+                error: wm.wm.protobuf.ErrorCode.ERR_SUCCESS,
+                score: userScores?.score || 0,
+                localScore: sumLocalScore,
+                localRanking: ghostExpeditionRankings
+            }
+
+            // Encode the response
+			let message = wmsrv.wm.protobuf.LoadGhostExpeditionResultResponse.encode(msg);
 
             // Send the response to the client
             common.sendResponse(message, res);

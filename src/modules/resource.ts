@@ -614,5 +614,44 @@ export default class ResourceModule extends Module {
             // Send the response to the client
             common.sendResponse(message, res);
         })
+
+
+        app.get('/resource/ghost_expedition_participants', async (req, res) => {
+
+            console.log('ghost_expedition_participants');
+
+            // Get url query
+            let ghost_expedition_id = Number(req.query.ghost_expedition_id);
+            let place_id = String(req.query.place_id);
+
+            // Get local store participant
+            let localParticipant = await prisma.ghostExpedition.findMany({
+                where:{
+                    ghostExpeditionId: ghost_expedition_id
+                },
+                orderBy:{
+                    score: 'desc'
+                }
+            })
+
+            let arrayParticipant = [];
+            for(let i=0; i<localParticipant.length; i++)
+            {
+                arrayParticipant.push(localParticipant[i].carId);
+            }
+
+            // Response data
+            let msg = {
+                placeId: place_id,
+                participantCars: arrayParticipant
+            };
+
+            // Encode the response
+			let message = wm.wm.protobuf.GhostExpeditionParticipants.encode(msg);
+
+            // Send the response to the client
+            common.sendResponse(message, res);
+        })
+        
     }
 }

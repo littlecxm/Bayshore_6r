@@ -19,6 +19,8 @@ export default class UserModule extends Module {
 
             // Get the request body for the load user request
 			let body = wm.wm.protobuf.LoadUserRequest.decode(req.body);
+			
+			// Trim Mojibake
 			body.cardChipId = body.cardChipId.replace('��������0000', '');
 
             // Get the user from the database

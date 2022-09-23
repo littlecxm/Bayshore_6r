@@ -300,6 +300,9 @@ export default class CarModule extends Module {
 			// Get the request body for the create car request
 			let body = wm.wm.protobuf.CreateCarRequest.decode(req.body);
 
+			// Trim Mojibake
+			body.cardChipId = body.cardChipId.replace('��������0000', '');
+
 			// Get the current date/time (unix epoch)
 			let date = Math.floor(new Date().getTime() / 1000)
 

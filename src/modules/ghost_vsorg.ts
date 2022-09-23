@@ -22,14 +22,14 @@ export default class GhostModule extends Module {
             let userScores = await prisma.ghostExpedition.findFirst({
                 where:{
                     carId: body.carId,
-                    ghostExpeditionId: 1
+                    ghostExpeditionId: body.ghostExpeditionId
                 }
             })
 
             // Get local store score
             let localScores = await prisma.ghostExpedition.findMany({
                 where:{
-                    ghostExpeditionId: 1
+                    ghostExpeditionId: body.ghostExpeditionId
                 },
                 orderBy:{
                     score: 'desc'
@@ -62,7 +62,7 @@ export default class GhostModule extends Module {
         app.post('/method/load_ghost_expedition_target_by_path', async (req, res) => {
 
             // Get the request body for the load stamp target request
-            //let body = wm.wm.protobuf.LoadGhostExpeditionTargetByPathRequest.decode(req.body);
+            let body = wm.wm.protobuf.LoadGhostExpeditionTargetByPathRequest.decode(req.body);
 
             let areaExpedition: wm.wm.protobuf.LoadGhostExpeditionTargetByPathResponse.AreaStats[] = [];
 
@@ -141,7 +141,7 @@ export default class GhostModule extends Module {
 
                 let checkWantedList = await prisma.ghostExpeditionWantedCar.findMany({
                     where:{
-                        ghostExpeditionId: 1,
+                        ghostExpeditionId: body.ghostExpeditionId,
                         area: j
                     },
                     orderBy:{
@@ -202,7 +202,7 @@ export default class GhostModule extends Module {
 
             // Get the area id and ramp id
             let area = 0;
-            let ramp = 0; // this is important to set, if not.. the path shown when selecting car tune will get randomized
+            let ramp = 0; // this is important to set, if not.. the path shown when selecting car tune and loading screen will get randomized
             let path = 0;
             if(body.path)
             {
@@ -343,7 +343,7 @@ export default class GhostModule extends Module {
             // Get store result performance
             let localScores = await prisma.ghostExpedition.findMany({
                 where:{
-                    ghostExpeditionId: 1
+                    ghostExpeditionId: body.ghostExpeditionId
                 }
             })
             let sumLocalScore = 0;

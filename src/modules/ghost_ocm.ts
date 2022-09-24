@@ -407,10 +407,10 @@ export default class GhostModule extends Module {
             // Get currently active OCM event
 			let ocmEventDate = await prisma.oCMEvent.findFirst({ 
                 where: {
-					// qualifyingPeriodStartAt is less than equal current date
+					// qualifyingPeriodStartAt is less than current date
 					qualifyingPeriodStartAt: { lte: date },
 		
-					// competitionEndAt is greater than equal current date
+					// competitionEndAt is greater than current date
 					competitionEndAt: { gte: date },
 				},
                 orderBy:{
@@ -432,7 +432,7 @@ export default class GhostModule extends Module {
 			// Declare variable for Top 1 OCM Ghost
 			let ghostCars: wm.wm.protobuf.GhostCar;
 			let ghostTypes;
-			let cars: wm.wm.protobuf.ICar | (Car & { gtWing: CarGTWing; }) | null;
+			let cars: wm.wm.protobuf.ICar | null;
 			let playedPlace = wm.wm.protobuf.Place.create({ 
 				placeId: Config.getConfig().placeId,
                 regionId: Config.getConfig().regionId,
@@ -440,7 +440,6 @@ export default class GhostModule extends Module {
                 country: Config.getConfig().country
 			});
 			let competitionSchedule;
-
 
 			// Get default trail id
 			let ghostTrailId = 0;
@@ -631,6 +630,22 @@ export default class GhostModule extends Module {
 					ghostTrailId = checkGhostTrail.dbId!;
 					ghostTypes = wm.wm.protobuf.GhostType.GHOST_NORMAL;
 
+					let checkShopName = await prisma.oCMGhostBattleRecord.findFirst({
+						where:{
+							carId: checkGhostTrail!.carId,
+							competitionId: competition_id
+						},
+						select:{
+							playedShopName: true
+						}
+					})
+
+					if(checkShopName)
+					{
+						cars!.lastPlayedPlace!.shopName = checkShopName.playedShopName;
+					}
+
+
 					let ocmEventDate = await prisma.oCMEvent.findFirst({
 						where: {
 							competitionId: competition_id
@@ -684,7 +699,7 @@ export default class GhostModule extends Module {
 				path: pathVal,
 				nonhuman: false,
 				type: ghostTypes,
-				trailId: ghostTrailId
+				trailId: ghostTrailId,
 			});
 
             // Response data

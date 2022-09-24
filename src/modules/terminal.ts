@@ -573,19 +573,17 @@ export default class TerminalModule extends Module {
 
             // Get current active OCM Event
             let ocmEventDate = await prisma.oCMEvent.findFirst({
-                where:{
+				where:{
 					competitionId: body.competitionId
-				},
-                orderBy:{
-                    dbId: 'desc'
-                }
-            });
+				}
+			});
 
 			// Declare GhostCompetitionSchedule
             let compeSch; 
 			let msg: any;
 
-            if(ocmEventDate){
+            if(ocmEventDate)
+			{
                 // Creating GhostCompetitionSchedule
                 compeSch = wm.wm.protobuf.GhostCompetitionSchedule.create({ 
 
@@ -626,6 +624,7 @@ export default class TerminalModule extends Module {
 				let periodId: number = 0;
 				let ownRecords;
 				let topRecords: wm.wm.protobuf.LoadGhostCompetitionRankingResponse.Entry[] = [];
+				let playedShopName = Config.getConfig().shopName;
 
 				// Current date is OCM main draw
 				if(ocmEventDate!.competitionStartAt < date && ocmEventDate!.competitionCloseAt > date)
@@ -639,11 +638,11 @@ export default class TerminalModule extends Module {
 							competitionId: ocmEventDate!.competitionId,
 							startAt: 
 							{
-								lte: date, // competitionStartAt is less than equal current date
+								lte: date, // competitionStartAt is less than current date
 							},
 							closeAt:
 							{
-								gte: date, // competitionCloseAt is greater than equal current date
+								gte: date, // competitionCloseAt is greater than current date
 							}
 						}
 					});
@@ -678,10 +677,15 @@ export default class TerminalModule extends Module {
 
 							let ocmGhostrecord = await prisma.oCMGhostBattleRecord.findFirst({
 								where:{
-									carId: ocmParticipant[i].carId,
+									carId: ocmParticipant[0].carId,
 									competitionId: ocmEventDate!.competitionId,
 								}
 							});
+
+							if(ocmGhostrecord?.playedShopName !== null && ocmGhostrecord?.playedShopName !== undefined)
+							{
+								playedShopName = ocmGhostrecord.playedShopName;
+							}
 
 							if(ocmParticipant[i].carId === body.carId && ranking === 0)
 							{
@@ -698,7 +702,7 @@ export default class TerminalModule extends Module {
 									title: cars!.title,
 									level: cars!.level,
 									windowStickerString: cars!.windowStickerString,
-									playedShopName: ocmGhostrecord!.playedShopName,
+									playedShopName: playedShopName,
 									playedAt: ocmGhostrecord!.playedAt
 								});
 
@@ -718,7 +722,7 @@ export default class TerminalModule extends Module {
 								title: cars!.title,
 								level: cars!.level,
 								windowStickerString: cars!.windowStickerString,
-								playedShopName: ocmGhostrecord!.playedShopName,
+								playedShopName: playedShopName,
 								playedAt: ocmGhostrecord!.playedAt
 							}));
 						}
@@ -832,7 +836,7 @@ export default class TerminalModule extends Module {
 
 							let ocmGhostrecord = await prisma.oCMGhostBattleRecord.findFirst({
 								where:{
-									carId: ocmParticipant[i].carId,
+									carId: ocmParticipant[0].carId,
 									competitionId: ocmEventDate!.competitionId,
 								}
 							});

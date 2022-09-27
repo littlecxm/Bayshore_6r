@@ -102,7 +102,7 @@ export default class StartupModule extends Module {
                 }
             }
 
-            // TODO: Move this to db
+            // Get VSORG Event Date
             let ghostExpeditionDate = await prisma.ghostExpeditionEvent.findFirst({
                 where: {
 					// qualifyingPeriodStartAt is less than equal current date

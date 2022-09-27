@@ -18,7 +18,7 @@ Wangan Midnight Maximum Tune 6R server reimplementation written in TypeScript
 
  - Wanted Info for each area (game will crash... idk why)
 
-## THIS PROJECT IS CURRENTLY UNSUPPORTED. DO NOT MESSAGE ME FOR HELP
+### THIS PROJECT IS CURRENTLY UNSUPPORTED. DO NOT MESSAGE ME FOR HELP
 
 ## Credits
 This software is part of [Project Asakura](https://github.com/ProjectAsakura).

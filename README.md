@@ -15,7 +15,7 @@ Wangan Midnight Maximum Tune 6R server reimplementation written in TypeScript
  - Ghost Trophies Saving
  
  ## What is not working
- - some people still get the game will crash at mileage screen.. idk if this is because of bayshore server or openparrot(?) [current solution = create G: drive then restart your pc, then open tpui and amauth as admin]
+ - some people still get the game will crash at mileage screen.. idk if this is because of bayshore server or openparrot(?) [current solution = create F: and G: drive then restart your pc, then open tpui and amauth as admin]
  
  - Transfer from 6
 

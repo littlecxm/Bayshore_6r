@@ -8,6 +8,7 @@ Wangan Midnight Maximum Tune 6R server reimplementation written in TypeScript
 </p>
 
 ## Contributor
+<<<<<<< HEAD
 <p>
     <a href="https://github.com/ry00001">
         <img src="https://images.weserv.nl/?url=avatars.githubusercontent.com/u/15631667?v=4&h=300&w=300&fit=cover&mask=circle&maxage=7d" width="30px">
@@ -32,6 +33,9 @@ Wangan Midnight Maximum Tune 6R server reimplementation written in TypeScript
         <b>shiroikitsu8</b> (Shiroi Kitsu)
     </a>
 </p>
+=======
+<img src="https://i.ibb.co/4TWFFBt/Untitled.png" width="250px">
+>>>>>>> a24cf9c (Update README.md)
 
 ## What is working
  - Same like 6

@@ -5,7 +5,7 @@ Wangan Midnight Maximum Tune 6R server reimplementation written in TypeScript
     <img src="https://repository-images.githubusercontent.com/523956269/9a72b45d-7b27-4237-8aeb-476865a6d6d6" width="640" title="hover text">
 </p>
 
-# Contributor
+## Contributor
 <img src="https://i.ibb.co/4TWFFBt/Untitled.png" width="250px">
 
 ## What is working

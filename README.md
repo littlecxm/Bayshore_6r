@@ -5,6 +5,9 @@ Wangan Midnight Maximum Tune 6R server reimplementation written in TypeScript
     <img src="https://repository-images.githubusercontent.com/523956269/9a72b45d-7b27-4237-8aeb-476865a6d6d6" width="640" title="hover text">
 </p>
 
+# Contributor
+<img src="https://i.ibb.co/4TWFFBt/Untitled.png" width="250px">
+
 ## What is working
  - Same like 6
  - VSORG [Expedition] (some of them maybe... expedition saving works)
@@ -18,7 +21,7 @@ Wangan Midnight Maximum Tune 6R server reimplementation written in TypeScript
 
  - Wanted Info for each area (game will crash... idk why)
 
-### THIS PROJECT IS CURRENTLY UNSUPPORTED. DO NOT MESSAGE ME FOR HELP
+### THIS PROJECT IS CURRENTLY UNSUPPORTED. DO NOT MESSAGE ANYONE FOR HELP
 
 ## Credits
 This software is part of [Project Asakura](https://github.com/ProjectAsakura).

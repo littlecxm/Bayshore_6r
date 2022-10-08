@@ -79,93 +79,104 @@ export default class UserModule extends Module {
 					return;
 				}
 
-				let user = await prisma.user.create({
-					data: {
-						chipId: body.cardChipId,
-						accessCode: body.accessCode,
-						tutorials: [
-							false, // TUTORIAL_ID_STORY = 0,
-							false, // TUTORIAL_ID_TIME_ATTACK = 1,
-							false, // TUTORIAL_ID_GHOST = 2,
-							false, // TUTORIAL_ID_GHOST_CHALLENGE = 3,
-							false, // TUTORIAL_ID_UNUSED_4 = 4,
-							false, // TUTORIAL_ID_UNUSED_5 = 5,
-							false, // TUTORIAL_ID_GHOST_SEARCH = 6,
-							false, // TUTORIAL_ID_GHOST_COMPETITION = 7,
-							false, // TUTORIAL_ID_HP600_CARD = 8,
-							false, // TUTORIAL_ID_UNUSED_9 = 9,
-							false, // TUTORIAL_ID_COMPETITION_QUALIFIED = 10,
-							false, // TUTORIAL_ID_COMPETITION_TERMINAL = 11,
-							false, // TUTORIAL_ID_COMPETITION_NOTICE = 12,
-							false, // TUTORIAL_ID_COMPETITION_FINISHED = 13,
-							false, // TUTORIAL_ID_UNUSED_14 = 14,
-							false, // TUTORIAL_ID_UNUSED_15 = 15,
-							false, // TUTORIAL_ID_UNUSED_16 = 16,
-							false, // TUTORIAL_ID_UNUSED_17 = 17,
-							false, // TUTORIAL_ID_UNUSED_18 = 18,
-							false, // TUTORIAL_ID_UNUSED_19 = 19,
-							false, // TUTORIAL_ID_GHOST_STAMP = 20,
-							false, // TUTORIAL_ID_GHOST_STAMP_DECLINED = 21,
-							false, // TUTORIAL_ID_GHOST_STAMP_FRIENDS = 22,
-							false, // TUTORIAL_ID_TERMINAL_SCRATCH = 23,
-							false, // TUTORIAL_ID_TURN_SCRATCH_SHEET = 24,
-							false, // TUTORIAL_ID_INVITE_FRIEND_CAMPAIGN = 25,
-							false, // TUTORIAL_ID_CAR_COUPON_FULL_TUNED_RECEIVABLE = 26,
-							false, // TUTORIAL_ID_VS_CONTINUE_TICKET = 27,
-							false, // TUTORIAL_ID_UNUSED_28 = 28,
-							false, // TUTORIAL_ID_UNUSED_29 = 29,
-							false, // TUTORIAL_ID_UNUSED_30 = 30,
-							false, // TUTORIAL_ID_DRESS_UP = 31,
-							false, // TUTORIAL_ID_UNUSED_32 = 32,
-							false, // TUTORIAL_ID_STORY_NEW_FEATURE = 33,
-							false, // TUTORIAL_ID_GHOST_NEW_FEATURE = 34,
-							false, // TUTORIAL_ID_UNUSED_35 = 35,
-							false, // TUTORIAL_ID_GHOST_EXPEDITION_NEW = 36,
-							false, // TUTORIAL_ID_GHOST_EXPEDITION_WANTED = 37,
-							false, // TUTORIAL_ID_GHOST_EXPEDITION_WANTED2 = 38,
-							false, // TUTORIAL_ID_GHOST_EXPEDITION_REWARD = 39,
-							false, // TUTORIAL_ID_MULTI_GHOST_VS_2 = 40,
-							false, // TUTORIAL_ID_MULTI_GHOST_VS_3 = 41,
-							false, // TUTORIAL_ID_GHOST_SELECT_BY_OTHER_PLACE = 42,
-							false, // TUTORIAL_ID_GHOST_SELECT_BY_MANUFACTURER = 43,
-							false, // TUTORIAL_ID_GHOST_SELECT_BY_OTHER_MANUFACTURER = 44,
-							false, // TUTORIAL_ID_GHOST_SELECT_BY_PLAYED = 45,
-							false, // TUTORIAL_ID_GHOST_HIGHWAY_NEW = 46,
-							false, // TUTORIAL_ID_GHOST_HIGHWAY_STATION = 47,
-							false, // TUTORIAL_ID_GHOST_HIGHWAY_BOSS = 48,
-							false, // TUTORIAL_ID_GHOST_TROPHY = 49,
-							false, // TUTORIAL_ID_GHOST_SELECT = 50,
-							false, // TUTORIAL_ID_GHOST_SELECT_BY_SAME_PLACE = 51
-						],
-					}
-				});
+				let newCardsBanned = Config.getConfig().gameOptions.newCardsBanned;
 
-				console.log('user made')
-
-				if (!user) 
+				if (newCardsBanned < 1)
 				{
-					msg.error = wm.wm.protobuf.ErrorCode.ERR_REQUEST;
-				}
+					let user = await prisma.user.create({
+						data: {
+							chipId: body.cardChipId,
+							accessCode: body.accessCode,
+							tutorials: [
+								false, // TUTORIAL_ID_STORY = 0,
+								false, // TUTORIAL_ID_TIME_ATTACK = 1,
+								false, // TUTORIAL_ID_GHOST = 2,
+								false, // TUTORIAL_ID_GHOST_CHALLENGE = 3,
+								false, // TUTORIAL_ID_UNUSED_4 = 4,
+								false, // TUTORIAL_ID_UNUSED_5 = 5,
+								false, // TUTORIAL_ID_GHOST_SEARCH = 6,
+								false, // TUTORIAL_ID_GHOST_COMPETITION = 7,
+								false, // TUTORIAL_ID_HP600_CARD = 8,
+								false, // TUTORIAL_ID_UNUSED_9 = 9,
+								false, // TUTORIAL_ID_COMPETITION_QUALIFIED = 10,
+								false, // TUTORIAL_ID_COMPETITION_TERMINAL = 11,
+								false, // TUTORIAL_ID_COMPETITION_NOTICE = 12,
+								false, // TUTORIAL_ID_COMPETITION_FINISHED = 13,
+								false, // TUTORIAL_ID_UNUSED_14 = 14,
+								false, // TUTORIAL_ID_UNUSED_15 = 15,
+								false, // TUTORIAL_ID_UNUSED_16 = 16,
+								false, // TUTORIAL_ID_UNUSED_17 = 17,
+								false, // TUTORIAL_ID_UNUSED_18 = 18,
+								false, // TUTORIAL_ID_UNUSED_19 = 19,
+								false, // TUTORIAL_ID_GHOST_STAMP = 20,
+								false, // TUTORIAL_ID_GHOST_STAMP_DECLINED = 21,
+								false, // TUTORIAL_ID_GHOST_STAMP_FRIENDS = 22,
+								false, // TUTORIAL_ID_TERMINAL_SCRATCH = 23,
+								false, // TUTORIAL_ID_TURN_SCRATCH_SHEET = 24,
+								false, // TUTORIAL_ID_INVITE_FRIEND_CAMPAIGN = 25,
+								false, // TUTORIAL_ID_CAR_COUPON_FULL_TUNED_RECEIVABLE = 26,
+								false, // TUTORIAL_ID_VS_CONTINUE_TICKET = 27,
+								false, // TUTORIAL_ID_UNUSED_28 = 28,
+								false, // TUTORIAL_ID_UNUSED_29 = 29,
+								false, // TUTORIAL_ID_UNUSED_30 = 30,
+								false, // TUTORIAL_ID_DRESS_UP = 31,
+								false, // TUTORIAL_ID_UNUSED_32 = 32,
+								false, // TUTORIAL_ID_STORY_NEW_FEATURE = 33,
+								false, // TUTORIAL_ID_GHOST_NEW_FEATURE = 34,
+								false, // TUTORIAL_ID_UNUSED_35 = 35,
+								false, // TUTORIAL_ID_GHOST_EXPEDITION_NEW = 36,
+								false, // TUTORIAL_ID_GHOST_EXPEDITION_WANTED = 37,
+								false, // TUTORIAL_ID_GHOST_EXPEDITION_WANTED2 = 38,
+								false, // TUTORIAL_ID_GHOST_EXPEDITION_REWARD = 39,
+								false, // TUTORIAL_ID_MULTI_GHOST_VS_2 = 40,
+								false, // TUTORIAL_ID_MULTI_GHOST_VS_3 = 41,
+								false, // TUTORIAL_ID_GHOST_SELECT_BY_OTHER_PLACE = 42,
+								false, // TUTORIAL_ID_GHOST_SELECT_BY_MANUFACTURER = 43,
+								false, // TUTORIAL_ID_GHOST_SELECT_BY_OTHER_MANUFACTURER = 44,
+								false, // TUTORIAL_ID_GHOST_SELECT_BY_PLAYED = 45,
+								false, // TUTORIAL_ID_GHOST_HIGHWAY_NEW = 46,
+								false, // TUTORIAL_ID_GHOST_HIGHWAY_STATION = 47,
+								false, // TUTORIAL_ID_GHOST_HIGHWAY_BOSS = 48,
+								false, // TUTORIAL_ID_GHOST_TROPHY = 49,
+								false, // TUTORIAL_ID_GHOST_SELECT = 50,
+								false, // TUTORIAL_ID_GHOST_SELECT_BY_SAME_PLACE = 51
+							],
+						}
+					});
 
-				let ftTicketGrant = Config.getConfig().gameOptions.grantFullTuneTicketToNewUsers;
+					console.log('user made')
 
-				if (ftTicketGrant > 0) 
-				{
-					console.log(`Granting Full-Tune Ticket x${ftTicketGrant} to new user...`);
-
-					for (let i=0; i<ftTicketGrant; i++) 
+					if (!user) 
 					{
-						await prisma.userItem.create({
-							data: {
-								userId: user.id,
-								category: wm.wm.protobuf.ItemCategory.CAT_CAR_TICKET_FREE,
-								itemId: 5, 
-								type: 0 // Car Ticket
-							}
-						});
+						msg.error = wm.wm.protobuf.ErrorCode.ERR_REQUEST;
 					}
 
-					console.log('Done!');
+					let ftTicketGrant = Config.getConfig().gameOptions.grantFullTuneTicketToNewUsers;
+
+					if (ftTicketGrant > 0) 
+					{
+						console.log(`Granting Full-Tune Ticket x${ftTicketGrant} to new user...`);
+
+						for (let i=0; i<ftTicketGrant; i++) 
+						{
+							await prisma.userItem.create({
+								data: {
+									userId: user.id,
+									category: wm.wm.protobuf.ItemCategory.CAT_CAR_TICKET_FREE,
+									itemId: 5, 
+									type: 0 // Car Ticket
+								}
+							});
+						}
+
+						console.log('Done!');
+					}
+				}
+				else
+				{
+					console.log('<---new card/new user are banned--->');
+					
+					msg.error = wm.wm.protobuf.ErrorCode.ERR_REQUEST;
 				}
 
 				// Encode the response

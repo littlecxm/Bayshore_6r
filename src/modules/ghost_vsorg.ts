@@ -220,7 +220,7 @@ export default class GhostModule extends Module {
                 }
                 else if(body.path >= 18 && body.path <= 19){ // GID_PATH_WT_UP_DOWN
                     area = Number(3);
-                    ramp = 7;
+                    ramp = 8;
                 }
                 else if(body.path >= 20 && body.path <= 26){ // GID_PATH_WG
                     area = Number(4);

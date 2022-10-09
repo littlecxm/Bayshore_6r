@@ -1,3 +1,5 @@
+### THIS PROJECT IS CURRENTLY UNSUPPORTED. DO NOT MESSAGE ANYONE FOR HELP
+
 # Bayshore 6R
 Wangan Midnight Maximum Tune 6R server reimplementation written in TypeScript
 
@@ -20,8 +22,6 @@ Wangan Midnight Maximum Tune 6R server reimplementation written in TypeScript
  - Transfer from 6
 
  - Wanted Info for each area (game will crash... idk why)
-
-### THIS PROJECT IS CURRENTLY UNSUPPORTED. DO NOT MESSAGE ANYONE FOR HELP
 
 ## Credits
 This software is part of [Project Asakura](https://github.com/ProjectAsakura).

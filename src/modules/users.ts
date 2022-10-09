@@ -79,8 +79,10 @@ export default class UserModule extends Module {
 					return;
 				}
 
+				// Check if new card registration is allowed or not
 				let newCardsBanned = Config.getConfig().gameOptions.newCardsBanned;
 
+				// New card registration is allowed
 				if (newCardsBanned < 1)
 				{
 					let user = await prisma.user.create({
@@ -172,9 +174,10 @@ export default class UserModule extends Module {
 						console.log('Done!');
 					}
 				}
+				// New card registration is not allowed / closed
 				else
 				{
-					console.log('<---new card/new user are banned--->');
+					console.log('New card / user registration is closed');
 					
 					msg.error = wm.wm.protobuf.ErrorCode.ERR_REQUEST;
 				}

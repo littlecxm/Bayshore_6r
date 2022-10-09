@@ -83,7 +83,7 @@ export default class UserModule extends Module {
 				let newCardsBanned = Config.getConfig().gameOptions.newCardsBanned;
 
 				// New card registration is allowed
-				if (newCardsBanned < 1)
+				if (newCardsBanned === 0)
 				{
 					let user = await prisma.user.create({
 						data: {

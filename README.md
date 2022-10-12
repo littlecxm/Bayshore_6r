@@ -8,7 +8,7 @@ Wangan Midnight Maximum Tune 6R server reimplementation written in TypeScript
 </p>
 
 ## Contributor
-<img src="https://i.ibb.co/4TWFFBt/Untitled.png" width="250px">
+<img src="https://i.ibb.co/3rsRVzW/Untitled.png" width="250px">
 
 ## What is working
  - Same like 6

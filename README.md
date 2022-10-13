@@ -11,25 +11,25 @@ Wangan Midnight Maximum Tune 6R server reimplementation written in TypeScript
 <p>
     <a href="https://github.com/ry00001">
         <img src="https://images.weserv.nl/?url=avatars.githubusercontent.com/u/15631667?v=4&h=300&w=300&fit=cover&mask=circle&maxage=7d" width="30px">
-        <b>ry00001</b> Luna
+        <b>ry00001</b> (Luna)
     </a>
 </p>
 <p>
     <a href="https://github.com/doomertheboomer">
         <img src="https://images.weserv.nl/?url=avatars.githubusercontent.com/u/40309363?v=4&h=300&w=300&fit=cover&mask=circle&maxage=7d" width="30px">
-        <b>doomertheboomer</b> dmr
+        <b>doomertheboomer</b> (dmr)
     </a>
 </p>
 <p>
     <a href="https://github.com/damon-murdoch">
         <img src="https://images.weserv.nl/?url=avatars.githubusercontent.com/u/21363715?v=4&h=300&w=300&fit=cover&mask=circle&maxage=7d" width="30px">
-        <b>damon-murdoch</b> Damon Murdoch
+        <b>damon-murdoch</b> (Damon Murdoch)
     </a>
 </p>
 <p>
     <a href="https://github.com/shiroikitsu8">
         <img src="https://images.weserv.nl/?url=avatars.githubusercontent.com/u/108461408?v=4&h=300&w=300&fit=cover&mask=circle&maxage=7d" width="30px">
-        <b>shiroikitsu8</b> Shiroi Kitsu
+        <b>shiroikitsu8</b> (Shiroi Kitsu)
     </a>
 </p>
 

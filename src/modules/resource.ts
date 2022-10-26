@@ -335,6 +335,7 @@ export default class ResourceModule extends Module {
 					area: 'asc'
 				}
             });
+            let hiroshima_check: boolean = false;
             
             // Crown holder data available
             if(car_crown.length !== 0)
@@ -342,10 +343,10 @@ export default class ResourceModule extends Module {
                 let counter = 0;
 
                 // Loop GID_RUNAREA
-                for(let i=0; i<19; i++)
+                for(let i=0; i<14; i++)
                 { 
-                    // 14 - 16 are dummy area, 17 is C1 Closed
-                    if(i >= 14)
+                    // After Kobe is Hiroshima then Fukuoka and the rest
+                    if(i > 10 && hiroshima_check === false)
                     { 
                         i = 18; // GID_RUNAREA_HIROSHIMA
                     }
@@ -402,7 +403,8 @@ export default class ResourceModule extends Module {
                                 
                         }));
 
-                        if(counter < car_crown.length-1){
+                        if(counter < car_crown.length-1)
+                        {
                             counter++;
                         }
                     }
@@ -416,16 +418,23 @@ export default class ResourceModule extends Module {
                             unlockAt: 0,
                         }));
                     }
+
+                    // Put it back to Kobe area id
+                    if(i > 10 && hiroshima_check === false)
+                    {
+                        i = 10;
+                        hiroshima_check = true;
+                    }
                 }
             }
             // There is no user's crown holder data available
             else{ 
 
                 // Loop GID_RUNAREA
-                for(let i=0; i<19; i++)
+                for(let i=0; i<14; i++)
                 { 
-                    // 14 - 16 are dummy area, 17 is C1 Closed
-                    if(i >= 14)
+                    // After Kobe is Hiroshima then Fukuoka and the rest
+                    if(i > 10 && hiroshima_check === false)
                     { 
                         i = 18; // GID_RUNAREA_HIROSHIMA
                     }
@@ -436,6 +445,13 @@ export default class ResourceModule extends Module {
                         area: i, // GID_RUNAREA_C1 - GID_RUNAREA_TURNPIKE & GID_RUNAREA_HIROSHIMA
                         unlockAt: 0,
                     }));
+
+                    // Put it back to Kobe area id
+                    if(i > 10 && hiroshima_check === false)
+                    {
+                        i = 10;
+                        hiroshima_check = true;
+                    }
                 }
             } 
 

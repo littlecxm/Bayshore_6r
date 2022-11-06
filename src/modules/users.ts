@@ -356,32 +356,41 @@ export default class UserModule extends Module {
             // Response data
 			let msg = {
 				error: wm.wm.protobuf.ErrorCode.ERR_SUCCESS,
+				
+				// Bannapassport Data
 				unlockAt: null,
 				accessCode: null,
 				banapassportAmId: 1,
-				mbId: 1,
+				mbid: 1,
 				userId: user.id,
-				numOfOwnedCars: user.cars.length,
 
 				// 5 cars in-game, 200 cars on terminal
+				numOfOwnedCars: user.cars.length,
 				cars: user.cars.slice(0, body.maxCars), 
-
 				carStates,
+
+				// Ticket Owned
 				unusedCarTickets: tickets,
-				fullTunedCarTicket: true, // hmmmm...
+				fullTunedCarTicket: true,
+
+				// Tutorials Confirmed
 				tutorials: user.tutorials,
 
-				// Set initial value for competition (OCM) participation
+				// Competition (OCM) participation
 				competitionUserState: wm.wm.protobuf.GhostCompetitionParticipantState.COMPETITION_NOT_PARTICIPATED,
 
 				// Set the window sticker string for all cars 
 				windowStickerString: wsString, 
 				windowStickerFont: wsFont,
 
-				// Wangan Navi Stuff?
+				// Wangan Navi
 				spappState: wm.wm.protobuf.SmartphoneAppState.SPAPP_BNID,
+
+				// idk what this is
 				transferState: wm.wm.protobuf.TransferState.TRANSFERRED,
 				wasCreatedToday: false,
+
+				// Invite Friend Campaign Event
 				participatedInInviteFriendCampaign: false,
 
 				// TODO: Make saving about this

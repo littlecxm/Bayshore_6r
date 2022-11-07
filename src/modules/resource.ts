@@ -449,7 +449,7 @@ export default class ResourceModule extends Module {
             else
             {
                 // Loop GID_RUNAREA
-                for(let i=0; i<14; i++)
+                for(let i=0; i<19; i++)
                 { 
                     // After Kobe is Hiroshima then Fukuoka and the rest
                     if(i > 14)
@@ -458,11 +458,27 @@ export default class ResourceModule extends Module {
                     }
 
                     // Push the default data by the game to the crown holder data
-                    list_crown.push(wmsrv.wm.protobuf.Crown.create({ 
-                        carId: 999999999-i,
-                        area: i, // GID_RUNAREA_C1 - GID_RUNAREA_TURNPIKE & GID_RUNAREA_HIROSHIMA
-                        unlockAt: 0,
-                    }));
+                    // GID_RUNAREA_HIROSHIMA
+                    if(i === 18)
+                    {
+                        let listCrown = wmsrv.wm.protobuf.Crown.create({  
+                            carId: 999999999-i,
+                            area: i,
+                            unlockAt: 0,
+                        });
+
+                        // Push it after Kobe
+                        list_crown.splice(11, 0, listCrown);
+                    }
+                    // GID_RUNAREA_C1 - GID_RUNAREA_TURNPIKE
+                    else
+                    {
+                        list_crown.push(wmsrv.wm.protobuf.Crown.create({ 
+                            carId: 999999999-i,
+                            area: i,
+                            unlockAt: 0,
+                        }));
+                    }
                 }
             } 
 
